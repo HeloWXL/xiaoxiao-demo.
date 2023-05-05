@@ -1,10 +1,12 @@
-package xx.chat;
+package xx.editor;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EasyChatApplicationTests {
+class EasyEditorApplicationTests {
 
+    @Test
     void contextLoads() {
     }
 
