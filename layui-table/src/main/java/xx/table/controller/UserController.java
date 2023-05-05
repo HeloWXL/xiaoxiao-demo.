@@ -29,7 +29,6 @@ public class UserController extends ApiController {
     @Resource
     private UserService userService;
 
-
     @GetMapping("toPage")
     public ModelAndView toPage() {
         return new ModelAndView("User");
