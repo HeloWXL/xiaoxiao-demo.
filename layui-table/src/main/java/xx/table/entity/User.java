@@ -20,16 +20,34 @@ import lombok.Data;
 @TableName("user")
 public class User extends Model<User> {
 
+    /**
+     * 主键ID
+     */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 用户ID
+     */
     private String userId;
 
+    /**
+     * 用户名
+     */
     private String userName;
 
+    /**
+     * 年龄
+     */
     private Integer age;
 
+    /**
+     * 地址
+     */
     private String address;
 
+    /**
+     * 创建时间
+     */
     private Date createTime;
 }

@@ -67,6 +67,22 @@ public class UserController extends ApiController {
         return success(this.userService.updateById(user));
     }
 
+
+    /**
+     * 新增、修改
+     *
+     * @param user
+     * @return
+     */
+    @PostMapping("saveOrUpdate")
+    public R saveOrUpdate(@RequestBody User user) {
+        if (user.getId() == null) {
+            return success(this.userService.save(user));
+        } else {
+            return success(this.userService.updateById(user));
+        }
+    }
+
     /**
      * 删除数据
      *
@@ -74,7 +90,7 @@ public class UserController extends ApiController {
      * @return 删除结果
      */
     @PostMapping("delete")
-    public R delete(@RequestParam("idList") List<Long> idList) {
+    public R delete(@RequestBody List<Integer> idList) {
         return success(this.userService.removeByIds(idList));
     }
 }
