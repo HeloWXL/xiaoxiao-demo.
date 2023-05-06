@@ -7,11 +7,10 @@ import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.servlet.ModelAndView;
 import xx.table.entity.User;
-import xx.table.service.UserService;
 import org.springframework.web.bind.annotation.*;
+import xx.table.service.UserService;
 
 import javax.annotation.Resource;
-import java.io.Serializable;
 import java.util.List;
 
 /**

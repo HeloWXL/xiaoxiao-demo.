@@ -1,7 +1,7 @@
 package xx.table.dao;
 
-import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import xx.table.entity.User;
 
 /**

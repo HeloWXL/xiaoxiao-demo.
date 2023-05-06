@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
+</head>
+<body>
+<!-- 模块名 -->
+<div class="layui-container" style="width: 100%;">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <!-- 模块名 -->
+            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">用户管理</blockquote>
+            <div class="top">
+                <form class="layui-form">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="userName" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline" id="btn">
+                        <div class="layui-inline">
+                            <button type="button" class="layui-btn layui-btn-normal" id="query">查询
+                            </button>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="reset" class="layui-btn layui-btn-normal" id="reset">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div>
+                <table id="userTable" lay-filter="userTableFilter"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 表格标签工具栏 -->
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn-group">
+            <button type="button" lay-event="import" class="layui-btn  layui-btn-normal ">
+                <i class="layui-icon">&#xe654;</i>导入
+            </button>
+            <button type="button" lay-event="export" class="layui-btn  layui-btn-normal ">
+                <i class="layui-icon">&#xe654;</i>导出
+            </button>
+            <button type="button" lay-event="add" class="layui-btn  layui-btn-normal ">
+                <i class="layui-icon">&#xe654;</i>增加
+            </button>
+            <button type="button" lay-event="update" class="layui-btn  layui-btn-normal"><i
+                    class="layui-icon">&#xe60a;</i>修改
+            </button>
+            <button type="button" lay-event="delete" class="layui-btn  layui-btn-normal"><i
+                    class="layui-icon">&#xe640;</i>删除
+            </button>
+        </div>
+    </div>
+</script>
+
+<!--用户新增、修改弹窗-->
+<div id="userDialog" style="display: none">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">单行输入框</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">验证必填项</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" lay-verify="required" lay-reqtext="用户名是必填项，岂能为空？" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--导入弹窗-->
+<div id="importDialog" style="display: none">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">单行输入框</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+
+
+</body>
+
+<!--引入js文件-->
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/user/user.js}"></script>
+</html>

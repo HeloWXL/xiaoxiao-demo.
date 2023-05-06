@@ -1,6 +1,11 @@
 package xx.chat.ws;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
 
 
 import javax.websocket.*;
@@ -14,6 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/chat/{userName}")
 @Component
 public class WebSocketServer {
+
+    /**
+     * 日志服务
+     */
+    private static Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     /**
      * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
      */
@@ -32,12 +42,10 @@ public class WebSocketServer {
      */
     private String userName = "";
 
-    /**
-     * @Description: 连接建立成功调用的方法，成功建立之后，将用户的userName 存储到redis
-     * @params: [session, userId]
-     * @return: void
-     * @Author: wangxianlin
-     * @Date: 2020/5/9 9:13 PM
+    /**连接建立成功调用的方法
+     *
+     * @param session
+     * @param userName
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("userName") String userName) {
@@ -45,28 +53,31 @@ public class WebSocketServer {
         this.userName = userName;
         webSocketMap.put(userName, this);
         addOnlineCount();
+        logger.info("用户 【{}】已连接,当前在线人数为:【{}】",userName , getOnlineCount());
     }
 
     /**
-     * @Description: 收到客户端消息后调用的方法, 调用API接口 发送消息到
-     * @params: [message, session]
-     * @return: void
-     * @Author: wangxianlin
-     * @Date: 2020/5/9 9:13 PM
+     * 接收客户端发送的消息
+     * @param message
      */
     @OnMessage
     public void onMessage(String message) {
-
+        JSONObject jsonObject  = JSON.parseObject(message);
+        String receiver = jsonObject.getString("receiver");
+        if(StringUtils.isEmpty(receiver)){
+            logger.info("接收人为空，无法推送消息");
+        }else{
+            jsonObject.put("sender",userName);
+            oneToOne(receiver, jsonObject.toJSONString());
+        }
     }
 
     /**
-     * 实现服务器主动推送
+     * 服务器主动推送
      */
-    public static void sendMessage(String toUser, String message) throws IOException {
-
-        Session session = null;
+    public static void oneToOne(String toUser, String message){
         WebSocketServer webSocketServer = webSocketMap.get(toUser);
-        session = webSocketServer.session;
+        Session session = webSocketServer.session;
         if (session != null && session.isOpen()) {
             try {
                 // 为了避免并发情况下造成异常
@@ -74,13 +85,11 @@ public class WebSocketServer {
                     session.getBasicRemote().sendText(message);
                 }
             } catch (IOException e) {
-
+                logger.error("websocket 消息发送异常");
             }
         } else {
-
+            logger.error("当前用户[{}]可能不在线，无法推送数据",toUser);
         }
-
-
     }
 
     /**
@@ -93,11 +102,7 @@ public class WebSocketServer {
     }
 
     /**
-     * @Description: 连接关闭调用的方法
-     * @params: []
-     * @return: void
-     * @Author: wangxianlin
-     * @Date: 2020/5/9 9:13 PM
+     * 连接关闭调用的方法
      */
     @OnClose
     public void onClose() {
@@ -109,33 +114,24 @@ public class WebSocketServer {
     }
 
     /**
-     * @Description: 获取在线人数
-     * @params: []
-     * @return: int
-     * @Author: wangxianlin
-     * @Date: 2020/5/9 9:09 PM
+     * 获取在线人数
+     * @return
      */
     public static synchronized int getOnlineCount() {
         return onlineCount;
     }
 
+
     /**
-     * @Description: 在线人数+1
-     * @params: []
-     * @return: void
-     * @Author: wangxianlin
-     * @Date: 2020/5/9 9:09 PM
+     * 在线人数+1
      */
     public static synchronized void addOnlineCount() {
         WebSocketServer.onlineCount++;
     }
 
+
     /**
-     * @Description: 在线人数-1
-     * @params: []
-     * @return: void
-     * @Author: wangxianlin
-     * @Date: 2020/5/9 9:09 PM
+     * 在线人数-1
      */
     public static synchronized void subOnlineCount() {
         WebSocketServer.onlineCount--;
