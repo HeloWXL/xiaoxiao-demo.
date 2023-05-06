@@ -1,28 +1,95 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>编辑器</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
 </head>
 <body>
-<!-- 模块名 -->
 <div class="layui-container" style="width: 100%;">
     <div class="layui-row">
         <div class="layui-col-md12">
             <!-- 模块名 -->
             <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">编辑器</blockquote>
-            <div>
-                <table id="userTable" lay-filter="userTableFilter"></table>
+            <div id="content"></div>
+            <div class="layui-btn-container" style="margin-top: 10px">
+                <button type="button" class="layui-btn layui-btn-primary" onclick="setcontent()">填入数据</button>
+                <button type="button" class="layui-btn" onclick="getcontent()">读取数据</button>
+                <button type="button" class="layui-btn layui-btn-normal" onclick="getbody()">获取纯文本</button>
             </div>
         </div>
     </div>
 </div>
 </body>
-
-<!--引入js文件-->
+<script th:src="@{/plugins/editor/tinymce.min.js}"></script>
 <script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
 <script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
-</html>
+<script>
+    $(function () {
+        /**
+         * 编辑器初始化
+         */
+        tinymce.init({
+            selector: '#content', //容器，可使用css选择器
+            language: 'zh_CN', //调用放在langs文件夹内的语言包
+            toolbar: true, //工具栏
+            menubar: true, //菜单栏
+            branding: false, //右下角技术支持
+            inline: false, //开启内联模式
+            elementpath: false,
+            min_height: 400, //最小高度
+            height: 800,  //高度
+            skin: 'oxide',
+            toolbar_sticky: true,
+            visualchars_default_state: true, //显示不可见字符
+            image_caption: true,
+            paste_data_images: true,
+            relative_urls: false,
+            // remove_script_host : false,
+            removed_menuitems: 'newdocument',  //清除“文件”菜单
+            plugins: "lists,hr, advlist,anchor,autolink,autoresize,charmap,code,codesample,emoticons,fullscreen,image,media,insertdatetime,link,pagebreak,paste,preview,print,searchreplace,table,textcolor,toc,visualchars,wordcount", //依赖lists插件
+            toolbar: 'bullist numlist anchor charmap emoticons fullscreen hr image insertdatetime link media pagebreak paste preview print searchreplace textcolor wordcount',
+            //选中时出现的快捷工具，与插件有依赖关系
+            images_upload_url: '/upload/uploadFile', /*后图片上传接口*/ /*返回值为json类型 {'location':'uploads/jpg'}*/
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
+    })
+
+
+    /*填入初始数据*/
+    //tinyMCE.activeEditor.setContent("<h1>测试</h1><hr><h2>这是测试的数据<h2>");
+    /*
+    1、如果当前页面只有一个编辑器：
+        获取内容：tinyMCE.activeEditor.getContent()
+        设置内容：tinyMCE.activeEditor.setContent(“需要设置的编辑器内容”)
+    2、如果当前页面有多个编辑器（下面的“[0]”表示第一个编辑器，以此类推）：
+        获取内容：tinyMCE.editors[0].getContent()
+        设置内容：tinyMCE.editors[0].setContent(“需要设置的编辑器内容”)
+    */
+    function setcontent() {
+        tinyMCE.activeEditor.setContent("<h1>设置内容1</h1>");
+    }
+
+
+    function getcontent() {
+        alert(tinyMCE.activeEditor.getContent());
+    }
+
+
+    /*3、获取不带HTML标记的纯文本内容：
+    var activeEditor = tinymce.activeEditor;
+    var editBody = activeEditor.getBody();
+    activeEditor.selection.select(editBody);
+    var text = activeEditor.selection.getContent( {'format' : 'text' } );*/
+    function getbody() {
+        var activeEditor = tinymce.activeEditor;
+        var editBody = activeEditor.getBody();
+        activeEditor.selection.select(editBody);
+        var text = activeEditor.selection.getContent({'format': 'text'});
+        alert(text);
+    }
+</script>

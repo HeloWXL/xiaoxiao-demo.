@@ -1,7 +1,6 @@
-package xx.chat.controller;
+package xx.editor.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -11,7 +10,7 @@ public class PageController {
 
     @GetMapping("toPage")
     public ModelAndView toPage() {
-        return new ModelAndView("/views/Editor");
+        return new ModelAndView("/chat");
     }
 
 }
