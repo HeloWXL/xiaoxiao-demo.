@@ -8,9 +8,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class PageController {
 
 
+
+
     @GetMapping("toPage")
     public ModelAndView toPage() {
-        return new ModelAndView("/chat");
+        return new ModelAndView("/views/Editor");
     }
 
 }

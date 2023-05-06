@@ -45,10 +45,10 @@
     <div class="layui-btn-container">
         <div class="layui-btn-group">
             <button type="button" lay-event="import" class="layui-btn  layui-btn-normal ">
-                <i class="layui-icon">&#xe654;</i>导入
+                <i class="layui-icon">&#xe67c;</i>导入
             </button>
             <button type="button" lay-event="export" class="layui-btn  layui-btn-normal ">
-                <i class="layui-icon">&#xe654;</i>导出
+                <i class="layui-icon">&#xe601;</i>导出
             </button>
             <button type="button" lay-event="add" class="layui-btn  layui-btn-normal ">
                 <i class="layui-icon">&#xe654;</i>增加
@@ -82,15 +82,15 @@
 </div>
 
 <!--导入弹窗-->
-<div id="importDialog" style="display: none">
-    <form class="layui-form">
-        <div class="layui-form-item">
-            <label class="layui-form-label">单行输入框</label>
-            <div class="layui-input-block">
-                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
-            </div>
+<div id="importDialog" style="display: none;text-align: center;">
+    <div class="layui-upload-drag" id="importExcel" style="margin: 15px">
+        <i class="layui-icon"></i>
+        <p>点击上传，或将文件拖拽到此处</p>
+        <div class="layui-hide" id="uploadDemoView">
+            <hr>
+            <img src="" alt="上传成功后渲染" style="max-width: 196px">
         </div>
-    </form>
+    </div>
 </div>
 
 

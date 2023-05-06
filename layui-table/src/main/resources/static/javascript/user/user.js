@@ -19,7 +19,7 @@ var user = {
     /**
      * 初始化layui
      */
-    initLayui:()=>{
+    initLayui: () => {
         layui.use(['table', 'form', 'layer'], function () {
             table = layui.table;
             form = layui.form;
@@ -30,16 +30,16 @@ var user = {
             user.queryUserData();
         });
     },
-
     /**
      * 监听按钮点击
      */
-    toolbarListener:()=>{
+    toolbarListener: () => {
         table.on('toolbar(userTableFilter)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
             //获取选中的数据
             var data = checkStatus.data;
             switch (obj.event) {
+                // 新增
                 case 'add':
                     layer.open({
                         id: 'add',
@@ -48,9 +48,57 @@ var user = {
                         skin: 'layui-layer-molv',
                         area: '500px',
                         offset: 'auto',
-                        content:$('#userDialog')
+                        content: $('#userDialog'),
+                        btn: ['提交', '取消'],
+                        success: (layero, index) => {
+                            layero.find('.layui-layer-btn').css('text-align', 'center');
+                        }
                     })
                     break;
+                // 修改
+                case 'update':
+                    layer.open({
+                        id: 'add',
+                        type: 1,
+                        title: ['修改用户'],
+                        skin: 'layui-layer-molv',
+                        area: '500px',
+                        offset: 'auto',
+                        content: $('#userDialog'),
+                        btn: ['提交', '取消'],
+                        success: (layero, index) => {
+                            layero.find('.layui-layer-btn').css('text-align', 'center');
+                        }
+                    })
+                    break;
+                // 删除
+                case 'delete':
+                    if (data.length === 0) {
+                        layer.msg('请选择一行', {icon: 1, time: 1500});
+                    } else {
+                        var length = data.length;
+                        var obj = new Array();
+                        for (var i = 0; i < length; i++) {
+                            obj.push(data[i].id);
+                        }
+                        layer.confirm('是否删除？', {title: '提示'}, function (index) {
+                            jsonPost(obj, '/user/deleteBatch', res => {
+                                if (res.data === true) {
+                                    layer.msg("删除成功", {icon: 1, time: 1500}, function () {
+                                        $("#insertForm")[0].reset();
+                                        //关闭弹窗
+                                        layer.closeAll();
+                                        // 重新刷新表格
+                                        table.reload('userList');
+                                    })
+                                } else {
+                                    layer.msg("删除失败", {icon: 5, time: 1500})
+                                }
+                            })
+                        });
+                    }
+                    break;
+                // 默认
                 default:
                     console.log('无对应按钮事件')
                     break;
@@ -60,7 +108,7 @@ var user = {
     /**
      * 查询用户列表
      */
-    queryUserData:()=>{
+    queryUserData: () => {
         table.render({
             id: 'userList',
             elem: '#userTable'

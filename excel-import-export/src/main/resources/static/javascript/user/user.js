@@ -1,6 +1,7 @@
 var table = null;
 var form = null;
 var layer = null;
+var upload = null;
 
 $(function () {
 
@@ -19,11 +20,12 @@ var user = {
     /**
      * 初始化layui
      */
-    initLayui:()=>{
-        layui.use(['table', 'form', 'layer'], function () {
+    initLayui: () => {
+        layui.use(['table', 'form', 'layer','upload'], function () {
             table = layui.table;
             form = layui.form;
             layer = layui.layer;
+            upload = layui.upload
             // 监听按钮点击
             user.toolbarListener();
             // 加载表格
@@ -34,22 +36,45 @@ var user = {
     /**
      * 监听按钮点击
      */
-    toolbarListener:()=>{
+    toolbarListener: () => {
         table.on('toolbar(userTableFilter)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
             //获取选中的数据
             var data = checkStatus.data;
             switch (obj.event) {
-                case 'add':
+                case 'import':
                     layer.open({
                         id: 'add',
                         type: 1,
-                        title: ['新增用户'],
+                        title: ['导入'],
                         skin: 'layui-layer-molv',
                         area: '500px',
                         offset: 'auto',
-                        content:$('#userDialog')
+                        content: $('#importDialog'),
+                        success: (layero, index) => {
+                            upload.render({
+                                elem: '#importExcel'
+                                , accept:'file'
+                                , exts:'xlsx'
+                                , url: '/user/import'
+                                , done: function (res) {
+                                    if (res.flag === true && res.data === true) {
+                                        layer.msg('上传成功', {icon: 1, time: 1500},function (){
+                                            table.reload('userList')
+                                            layer.close(index)
+                                        })
+                                    }else{
+                                        layer.msg('上传失败', {icon: 5, time: 1500},function (){
+                                            layer.close(index)
+                                        })
+                                    }
+                                }
+                            });
+                        }
                     })
+                    break;
+                case 'export':
+                    window.location.href = "/user/export";
                     break;
                 default:
                     console.log('无对应按钮事件')
@@ -60,7 +85,7 @@ var user = {
     /**
      * 查询用户列表
      */
-    queryUserData:()=>{
+    queryUserData: () => {
         table.render({
             id: 'userList',
             elem: '#userTable'
@@ -70,7 +95,8 @@ var user = {
             , method: 'get'
             , size: 'sm'
             , defaultToolbar: []
-            , parseData: function (res) { //res 即为原始返回的数据
+            //res 即为原始返回的数据
+            , parseData: function (res) {
                 return {
                     //解析接口状态
                     "code": res.code,
@@ -83,15 +109,18 @@ var user = {
                 };
             }
             , request: {
-                pageName: 'current' //页码的参数名称，默认：page
-                , limitName: 'size' //每页数据量的参数名，默认：limit
+                //页码的参数名称，默认：page
+                pageName: 'current'
+                //每页数据量的参数名，默认：limit
+                , limitName: 'size'
             }
             , cols: [[ //表头
                 {field: 'number', type: 'numbers'}
                 , {field: 'checkbox', type: 'checkbox'}
                 , {field: 'userId', title: '用户名', align: 'center'}
-                , {field: 'nickName', title: '用户昵称', align: 'center'}
-                , {field: 'mobile', title: '手机号码', align: 'center'}
+                , {field: 'userName', title: '用户昵称', align: 'center'}
+                , {field: 'age', title: '年龄', align: 'center'}
+                , {field: 'address', title: '地址', align: 'center'}
                 , {
                     field: 'createTime', title: '创建时间', align: 'center'
                 }

@@ -11,7 +11,7 @@ public class PageController {
 
     @GetMapping("toPage")
     public ModelAndView toPage() {
-        return new ModelAndView("/views/Editor");
+        return new ModelAndView("/chat");
     }
 
 }

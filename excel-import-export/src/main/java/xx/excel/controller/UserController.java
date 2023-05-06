@@ -3,8 +3,10 @@ package xx.excel.controller;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,6 +42,18 @@ public class UserController extends ApiController {
     }
 
     /**
+     * 分页查询所有数据
+     *
+     * @param page 分页对象
+     * @param user 查询实体
+     * @return 所有数据
+     */
+    @GetMapping("selectAll")
+    public R selectAll(Page<User> page, User user) {
+        return success(this.userService.page(page, new QueryWrapper<>(user)));
+    }
+
+    /**
      * 导出
      * @param response
      */
@@ -70,7 +84,9 @@ public class UserController extends ApiController {
                     .head(User.class)
                     .sheet()
                     .doReadSync();
-            return Result.success(userList);
+            // 批量插入
+            boolean res = userService.saveBatch(userList);
+            return Result.success("success",res);
         } catch (IOException e) {
             return Result.fail("导入失败");
         }
