@@ -7,12 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
-
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -42,7 +40,8 @@ public class WebSocketServer {
      */
     private String userName = "";
 
-    /**连接建立成功调用的方法
+    /**
+     * 连接建立成功调用的方法
      *
      * @param session
      * @param userName
@@ -53,21 +52,23 @@ public class WebSocketServer {
         this.userName = userName;
         webSocketMap.put(userName, this);
         addOnlineCount();
-        logger.info("用户 【{}】已连接,当前在线人数为:【{}】",userName , getOnlineCount());
+        logger.info("用户 【{}】已连接,当前在线人数为:【{}】", userName, getOnlineCount());
     }
 
     /**
      * 接收客户端发送的消息
+     *
      * @param message
      */
     @OnMessage
     public void onMessage(String message) {
-        JSONObject jsonObject  = JSON.parseObject(message);
+        logger.info("接收到客户端发送的消息：【{}】", message);
+        JSONObject jsonObject = JSON.parseObject(message);
         String receiver = jsonObject.getString("receiver");
-        if(StringUtils.isEmpty(receiver)){
+        if (StringUtils.isEmpty(receiver)) {
             logger.info("接收人为空，无法推送消息");
-        }else{
-            jsonObject.put("sender",userName);
+        } else {
+            jsonObject.put("sender", userName);
             oneToOne(receiver, jsonObject.toJSONString());
         }
     }
@@ -75,7 +76,7 @@ public class WebSocketServer {
     /**
      * 服务器主动推送
      */
-    public static void oneToOne(String toUser, String message){
+    public static void oneToOne(String toUser, String message) {
         WebSocketServer webSocketServer = webSocketMap.get(toUser);
         Session session = webSocketServer.session;
         if (session != null && session.isOpen()) {
@@ -88,7 +89,7 @@ public class WebSocketServer {
                 logger.error("websocket 消息发送异常");
             }
         } else {
-            logger.error("当前用户[{}]可能不在线，无法推送数据",toUser);
+            logger.error("当前用户[{}]可能不在线，无法推送数据", toUser);
         }
     }
 
@@ -115,6 +116,7 @@ public class WebSocketServer {
 
     /**
      * 获取在线人数
+     *
      * @return
      */
     public static synchronized int getOnlineCount() {

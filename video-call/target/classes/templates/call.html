@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>视频通话</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}">
+    <style>
+        .local-video, .remote-video {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-container">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 25px;">
+        <legend style="margin-left: 40%;">视频通话</legend>
+    </fieldset>
+    <div class="layui-row layui-col-space5">
+        <div class="layui-col-md6">
+            <blockquote class="layui-elem-quote">我</blockquote>
+            <div>
+                <video autoplay id="localVideo" class="local-video" th:poster="@{/images/a.jpeg}"></video>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <blockquote class="layui-elem-quote">他人</blockquote>
+            <div>
+                <video autoplay id="remoteVideo" class="remote-video"
+                       th:poster="@{/images/b.webp}"></video>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <blockquote class="layui-elem-quote">操作区域</blockquote>
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-normal" onclick="OPT.register()">注册</button>
+                <button type="button" class="layui-btn layui-btn-primary">摄像头</button>
+                <button type="button" class="layui-btn">音频</button>
+                <button type="button" class="layui-btn layui-btn-normal">屏幕共享</button>
+                <button type="button" class="layui-btn layui-btn-warm">关闭通话</button>
+                <button type="button" class="layui-btn layui-btn-danger" onclick="OPT.call()">呼叫</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+<!--注册弹窗-->
+<div id="registerDialog" style="display: none;margin-top:10px;">
+    <form class="layui-form">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="userId" placeholder="请输入用户名" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--呼叫弹窗-->
+<div id="callDialog" style="display: none;margin-top:10px;">
+    <form class="layui-form">
+        <div class="layui-inline">
+            <label class="layui-form-label">对方用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="targetUserId" placeholder="请输入对方用户名" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--jquery-->
+<script type="application/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+<!--layui-->
+<script type="application/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script>
+    /**
+     * PeerConnection 对象
+     */
+    var PeerConnection = window.RTCPeerConnection ||
+        window.mozRTCPeerConnection ||
+        window.webkitRTCPeerConnection;
+    /**
+     * 本地peerconnection 对象
+     */
+    var localRtcPc = null;
+    /**
+     * 本地视频流
+     */
+    var localStream = null;
+    // 声明用户ID 、 呼叫者ID
+    var userId, targetUserId = null;
+
+    var layer = null;
+
+    $(function () {
+        Layui.init();
+    });
+    /**
+     * 操作相关
+     */
+    var OPT = {
+        /**
+         * 注册
+         */
+        register: () => {
+            layer.open({
+                id: 'registerLayer',
+                type: 1,
+                title: ['注册'],
+                skin: 'layui-layer-molv',
+                area: '400px',
+                offset: 'auto',
+                content: $('#registerDialog'),
+                btn: ['提交', '取消'],
+                // 弹窗加载完成后回调
+                success: (layero) => {
+                    layero.find('.layui-layer-btn').css('text-align', 'center');
+                },
+                yes: (layero, index) => {
+                    SOCKET.start();
+                },
+                cancel: (index, layero) => {
+                    layer.close(index)
+                }
+            })
+        },
+        /**
+         * 呼叫
+         */
+        call: () => {
+            if (SOCKET.ws === null) {
+                layer.msg('您还没有注册，请先注册哦！', {icon: 5, time: 1500});
+                return false;
+            }
+            layer.open({
+                id: 'callLayer',
+                type: 1,
+                title: ['注册'],
+                skin: 'layui-layer-molv',
+                area: '300px',
+                offset: 'auto',
+                content: $('#callDialog'),
+                btn: ['提交', '取消'],
+                // 弹窗加载完成后回调
+                success: (layero) => {
+                    layero.find('.layui-layer-btn').css('text-align', 'center');
+                },
+                yes: (layero, index) => {
+                    RTC.call();
+
+                },
+                cancel: (index, layero) => {
+                    layer.close(index)
+                }
+            })
+        }
+    }
+
+    /**
+     * 初始化layui组件
+     * @type {{init: Layui.init}}
+     */
+    var Layui = {
+        /**
+         * 初始化layui
+         */
+        init: () => {
+            layui.use(['layer'], function () {
+                layer = layui.layer;
+            });
+        }
+    }
+
+    /**
+     * 信令服务器 相关
+     */
+    var SOCKET = {
+        /**
+         * websocket对象
+         */
+        ws: null,
+        /**
+         * websocket 连接地址
+         */
+        url: "" + window.location.protocol + "//" + window.location.host + "/sip/",
+        /**
+         * 开始建立连接
+         * @returns {boolean}
+         */
+        start: () => {
+            if (typeof (WebSocket) == "undefined") {
+                layer.msg('您的浏览器不支持WebSocket', {icon: 5})
+                return false;
+            }
+            var uId = $("#registerDialog input[name='userId']").val();
+            if (uId === '' || uId == null) {
+                layer.msg('请输入您的用户Id', {icon: 5, time: 1500})
+                return false;
+            }
+            userId = uId;
+            SOCKET.url = SOCKET.url.replace("https", "wss").replace("http", "ws");
+            //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+            if (SOCKET.ws != null) {
+                SOCKET.ws.close();
+                SOCKET.ws = null;
+            }
+            SOCKET.ws = new WebSocket(SOCKET.url + userId);
+            //打开事件
+            SOCKET.ws.onopen = SOCKET.onOpen;
+            //关闭事件
+            SOCKET.ws.onclose = SOCKET.onClose;
+            //发生了错误事件
+            SOCKET.ws.onerror = SOCKET.onError;
+            // 接收消息
+            SOCKET.ws.onmessage = SOCKET.onMessage;
+        },
+        /**
+         * 成功建立
+         */
+        onOpen: () => {
+            layer.closeAll();
+            layer.msg('信令服务器连接成功', {icon: 1, time: 1500});
+        },
+        /**
+         * 接收服务端推送消息
+         */
+        onMessage: (msg) => {
+            msg = JSON.parse(msg.data)
+            // 呼叫信息
+            if (msg.type === 'call') {
+                RTC.onCall(msg);
+            }
+            // 信令
+            if (msg.type === 'offer') {
+                RTC.onRemoteOffer(msg.data.userId, msg.data.offer);
+            }
+            // 回应
+            if (msg.type === 'answer') {
+                RTC.onRemoteAnswer(msg.data.answer);
+            }
+            // 候选信息
+            if (msg.type === 'candidate') {
+                RTC.onCandiDate(msg.data.candidate)
+            }
+        },
+        /**
+         * 连接发生错误
+         */
+        onError: () => {
+            layer.msg('信令服务器连接失败', {icon: 5, time: 1500})
+        },
+        /**
+         * 连接关闭
+         */
+        onClose: () => {
+            layer.msg('信令服务器已关闭', {icon: 5, time: 1500})
+        },
+        /**
+         * 发送消息
+         */
+        sendMsg: (obj) => {
+            if (SOCKET.ws && SOCKET.ws.readyState === 1) {
+                SOCKET.ws.send(JSON.stringify(obj));
+            } else {
+                layer.msg('请检查连接是否正常？', {icon: 5, time: 1500});
+            }
+        },
+        /**
+         * 断开连接
+         */
+        disConnect: () => {
+            if (SOCKET.ws) {
+                SOCKET.ws.close();
+            }
+        }
+    }
+
+    /**
+     * Webrtc 交互 相关
+     */
+    var RTC = {
+        /**
+         * 呼叫
+         */
+        call: () => {
+            var tUserId = $("#callDialog input[name='targetUserId']").val();
+            if (tUserId === '' || tUserId == null) {
+                layer.msg('请输入对方的用户ID', {icon: 5, time: 1500})
+                return false;
+            }
+            targetUserId = tUserId;
+            RTC.initCallerInfo(userId, targetUserId)
+            let params = {
+                "type": "call", "userId": userId, "targetUid": targetUserId
+            }
+            SOCKET.sendMsg(params);
+            // 关闭弹窗
+            layer.closeAll();
+        },
+        /**
+         * 初始化呼叫者信息
+         */
+        initCallerInfo: async (callerId, calleeId) => {
+            //初始化pc
+            localRtcPc = new PeerConnection();
+            //获取本地媒体并添加到pc中
+            let localStream = await RTC.getLocalUserMedia();
+            // 获取流的轨道信息
+            for (const track of localStream.getTracks()) {
+                localRtcPc.addTrack(track);
+            }
+            // 本地dom渲染
+            await RTC.setDomVideoStream("localVideo", localStream);
+            //回调监听
+            RTC.onPcEvent(localRtcPc, callerId, calleeId);
+            //流程-> 呼叫方A创建offer 保存到本地，并通过信令服务器转发给B
+            //创建offer
+            let offer = await localRtcPc.createOffer({iceRestart: true});
+            //设置offer本地描述
+            await localRtcPc.setLocalDescription(offer)
+            //发送offer给被呼叫端
+            let params = {
+                "type": "offer", "userId": callerId, "targetUid": calleeId, "offer": offer
+            }
+            SOCKET.sendMsg(params)
+        },
+        /**
+         * 初始化被呼叫者信息
+         */
+        initCalleeInfo: async (localUid, fromUid) => {
+            //初始化pc
+            localRtcPc = new PeerConnection()
+            //初始化本地媒体信息
+            let localStream = await RTC.getLocalUserMedia()
+            // 将流的所有轨道信息添加到localRtcPc中去
+            for (const track of localStream.getTracks()) {
+                localRtcPc.addTrack(track);
+            }
+            // dom渲染
+            await RTC.setDomVideoStream("localVideo", localStream)
+            //监听
+            RTC.onPcEvent(localRtcPc, localUid, fromUid)
+        },
+        /**
+         * 接收到呼叫请求
+         */
+        onCall: async (e) => {
+            await RTC.initCalleeInfo(e.data['targetUid'], e.data['userId'])
+        },
+        /**
+         * 信息交换
+         * @param fromUid
+         * @param offer
+         */
+        onRemoteOffer: async (fromUid, offer) => {
+            localRtcPc.setRemoteDescription(offer)
+            let answer = await localRtcPc.createAnswer();
+            await localRtcPc.setLocalDescription(answer);
+            let params = {"type": "answer", "targetUid": fromUid, "userId": this.userId, "answer": answer}
+            SOCKET.sendMsg(params)
+        },
+        /**
+         * 信息交换
+         * @param fromUid
+         * @param answer
+         */
+        onRemoteAnswer: async (answer) => {
+            await localRtcPc.setRemoteDescription(answer);
+        },
+        /**
+         * 候选信息处理
+         * @param candidate
+         */
+        onCandiDate: (candidate) => {
+            localRtcPc.addIceCandidate(candidate)
+        },
+        /**
+         * 事件监听
+         * @param pc
+         * @param localUid
+         * @param remoteUid
+         */
+        onPcEvent: (pc, localUid, remoteUid) => {
+            pc.ontrack = function (event) {
+                RTC.setRemoteDomVideoStream("remoteVideo", event.track)
+            };
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    let params = {
+                        'type': 'candidate', 'targetUid': remoteUid, "userId": localUid, "candidate": event.candidate
+                    }
+                    SOCKET.sendMsg(params)
+                } else {
+                    /* 在此次协商中，没有更多的候选了 */
+                    console.log("在此次协商中，没有更多的候选了")
+                }
+            }
+        },
+        /**
+         * 获取设备 stream
+         * @param constraints
+         * @returns {Promise<MediaStream>}
+         */
+        async getLocalUserMedia() {
+            let constraints = {video: true, audio: true}
+            return await navigator.mediaDevices.getUserMedia(constraints)
+        },
+        /**
+         * 显示本地视频流
+         * @param domId
+         * @param newStream
+         * @returns {Promise<void>}
+         */
+        async setDomVideoStream(domId, newStream) {
+            let video = document.getElementById(domId)
+            let stream = video.srcObject
+            if (stream) {
+                stream.getAudioTracks().forEach(e => {
+                    stream.removeTrack(e)
+                })
+                stream.getVideoTracks().forEach(e => {
+                    stream.removeTrack(e)
+                })
+            }
+            video.srcObject = newStream
+            video.muted = true
+        },
+        /**
+         * 显示远程视频流
+         * @param domId
+         * @param track
+         */
+        async setRemoteDomVideoStream(domId, track) {
+            let video = document.getElementById(domId)
+            let stream = video.srcObject
+            if (stream) {
+                stream.addTrack(track)
+            } else {
+                let newStream = new MediaStream()
+                newStream.addTrack(track)
+                video.srcObject = newStream
+                video.muted = true
+            }
+        },
+    }
+
+    window.onbeforeunload = function () {
+        SOCKET.disConnect();
+    }
+</script>
+</html>

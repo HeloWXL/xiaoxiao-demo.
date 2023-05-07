@@ -41,8 +41,8 @@
             <fieldset class="layui-elem-field layui-field-title">
                 <legend>消息记录</legend>
             </fieldset>
-            <div class="layui-tab layui-tab-card" style="height: 200px;overflow: auto">
-                <div id="msgDiv">
+            <div class="layui-tab layui-tab-card" style="height: 200px;">
+                <div id="msgDiv" class="scroller">
 
                 </div>
             </div>
@@ -151,6 +151,7 @@
                 '       <p class="user">用户名：' + msg.sender + '</p><p class="chat">' + msg.msg + '</p>' +
                 '   </div>' +
                 '</div>');
+            SOCKET.scroolBottom();
         },
         /**
          * 连接发生错误
@@ -198,15 +199,27 @@
                 layer.msg('请检查连接是否正常？', {icon: 5,time: 1500});
             }
         },
-
         /**
          * 滚动至底部
          */
         scroolBottom:()=>{
             var $div = document.getElementById("msgDiv");
             $div.scrollTop = $div.scrollHeight;
+        },
+        /**
+         * 断开连接
+         */
+        disConnect:()=>{
+            if(SOCKET.ws){
+                SOCKET.ws.close();
+            }
         }
     }
+
+    window.onbeforeunload  = function (){
+        SOCKET.disConnect();
+    }
+
 </script>
 </body>
 </html>

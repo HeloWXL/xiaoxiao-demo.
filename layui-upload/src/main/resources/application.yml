@@ -2,7 +2,7 @@
 
 # 服务端口配置
 server:
-  port: 8081
+  port: 8082
 
 # Spring 相关配置
 spring:
@@ -21,6 +21,6 @@ spring:
     suffix: .html
 
 
-
+# 文件存储位置
 file:
   path: D:/tmp/

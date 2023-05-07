@@ -8,7 +8,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class PageController {
 
-
     @GetMapping("toPage")
     public ModelAndView toPage() {
         return new ModelAndView("/chat");
