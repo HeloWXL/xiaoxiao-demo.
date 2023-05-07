@@ -5,7 +5,7 @@
 
 ## 环境
 
-- jdk
+- jdk1.8
 - idea
 - maven
 - springboot 2.1.1.RELEASE

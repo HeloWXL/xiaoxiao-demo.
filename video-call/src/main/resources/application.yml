@@ -3,11 +3,11 @@
 server:
   port: 8086
   # 配置 Https 证书
-  ssl:
-    key-store: classpath:keystore.jks
-    key-store-password: kurento
-    key-store-type: JKS
-    key-alias: kurento-selfsigned
+#  ssl:
+#    key-store: classpath:keystore.jks
+#    key-store-password: kurento
+#    key-store-type: JKS
+#    key-alias: kurento-selfsigned
 
 
 # Spring 配置
