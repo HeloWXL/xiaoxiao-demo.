@@ -109,7 +109,7 @@
          */
         start: () => {
             if (typeof (WebSocket) == "undefined") {
-                layer.msg('您的浏览器不支持WebSocket', {icon: 5})
+                layer.msg('您的浏览器不支持WebSocket', {icon: 5, time: 1500})
                 return false;
             }
             var userId = $("#userId").val();

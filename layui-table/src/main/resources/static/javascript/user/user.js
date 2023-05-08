@@ -49,7 +49,6 @@ var user = {
                         area: '500px',
                         offset: 'auto',
                         content: $('#userDialog'),
-                        btn: ['提交', '取消'],
                         success: (layero, index) => {
                             layero.find('.layui-layer-btn').css('text-align', 'center');
                         }
@@ -65,9 +64,9 @@ var user = {
                         area: '500px',
                         offset: 'auto',
                         content: $('#userDialog'),
-                        btn: ['提交', '取消'],
                         success: (layero, index) => {
                             layero.find('.layui-layer-btn').css('text-align', 'center');
+                            form.val("userInfo", data[0]);
                         }
                     })
                     break;
@@ -77,23 +76,23 @@ var user = {
                         layer.msg('请选择一行', {icon: 1, time: 1500});
                     } else {
                         var length = data.length;
-                        var obj = new Array();
+                        var obj = [];
                         for (var i = 0; i < length; i++) {
                             obj.push(data[i].id);
                         }
                         layer.confirm('是否删除？', {title: '提示'}, function (index) {
                             jsonPost(obj, '/user/deleteBatch', res => {
-                                if (res.data === true) {
-                                    layer.msg("删除成功", {icon: 1, time: 1500}, function () {
-                                        $("#insertForm")[0].reset();
-                                        //关闭弹窗
-                                        layer.closeAll();
+                                if (res.code === 0 && res.data) {
+                                    layer.msg("删除成功", {icon: 1, time: 1500}, () => {
                                         // 重新刷新表格
                                         table.reload('userList');
                                     })
                                 } else {
                                     layer.msg("删除失败", {icon: 5, time: 1500})
                                 }
+                            }, error => {
+                                console.error(error)
+                                layer.msg('服务器内部异常', {icon: 5, time: 1500})
                             })
                         });
                     }
@@ -116,7 +115,6 @@ var user = {
             , toolbar: '#toolbar'
             , page: true
             , method: 'get'
-            , size: 'sm'
             , defaultToolbar: []
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
@@ -137,13 +135,39 @@ var user = {
             , cols: [[ //表头
                 {field: 'number', type: 'numbers'}
                 , {field: 'checkbox', type: 'checkbox'}
-                , {field: 'userId', title: '用户名', align: 'center'}
-                , {field: 'nickName', title: '用户昵称', align: 'center'}
-                , {field: 'mobile', title: '手机号码', align: 'center'}
-                , {
-                    field: 'createTime', title: '创建时间', align: 'center'
-                }
+                , {field: 'userId', title: '用户ID', align: 'center'}
+                , {field: 'userName', title: '用户名', align: 'center'}
+                , {field: 'age', title: '年龄', align: 'center'}
+                , {field: 'address', title: '地址', align: 'center'}
+                , {field: 'createTime', title: '创建时间', align: 'center'}
             ]]
+        });
+    },
+
+    /**
+     * 监听提交表单
+     */
+    saveUser: () => {
+        form.on('submit(userInfo)', function (data) {
+            var obj = data.field;
+            // 向后台发送数据
+            jsonPost(obj, '/user/insert', res => {
+                // 判断提交成功还是失败
+                if (res.code === 0 && res.data) {
+                    layer.msg(res.msg, {icon: 1, time: 1500}, () => {
+                        layer.closeAll();
+                        table.reload('userList');
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500}, () => {
+                        table.reload('userList');
+                    })
+                }
+                console.log(res)
+            }, error => {
+                console.error(error)
+                layer.msg('服务器内部异常', {icon: 5, time: 1500})
+            })
         });
     }
 }

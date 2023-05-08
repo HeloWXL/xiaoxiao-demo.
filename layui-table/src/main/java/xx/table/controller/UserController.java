@@ -89,7 +89,7 @@ public class UserController extends ApiController {
      * @param idList 主键结合
      * @return 删除结果
      */
-    @PostMapping("delete")
+    @PostMapping("deleteBatch")
     public R delete(@RequestBody List<Integer> idList) {
         return success(this.userService.removeByIds(idList));
     }
