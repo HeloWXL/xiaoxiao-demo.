@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>邮件发送模板</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+</head>
+<body>
+<!-- 模块名 -->
+<div class="layui-container" style="width: 100%;">
+  <div class="layui-row">
+    <div class="layui-col-md12">
+      <!-- 模块名 -->
+      <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">邮件发送模板</blockquote>
+      <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+          <li class="layui-this">发送文本</li>
+          <li>发送附件+文本</li>
+          <li>发送HTML+附件</li>
+          <li>Freemarker模板发送</li>
+          <li>Thymeleaf模板发送</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+          <div class="layui-tab-item layui-show">
+            <form class="layui-form layui-form-pane" action="/mail/sendText" id="sendTextForm">
+              <div class="layui-form-item">
+                <label class="layui-form-label">发件人</label>
+                <div class="layui-input-inline">
+                  <input type="text" name="sender" lay-verify="required" placeholder="请输入接收人" autocomplete="off" th:value="${sender}"  readonly class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">邮件主题</label>
+                <div class="layui-input-inline">
+                  <input type="text" name="subject" lay-verify="required" placeholder="请输入邮件主题" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">接收人</label>
+                <div class="layui-input-inline">
+                  <input type="text" name="recipientStr" lay-verify="required" placeholder="请输入接收人" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">内容</label>
+                <div class="layui-input-block">
+                  <textarea placeholder="请输入内容" name="obj" class="layui-textarea"></textarea>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <button class="layui-btn layui-btn-normal" lay-submit="" type="submit" lay-filter="sendText">提交</button>
+              </div>
+
+            </form>
+          </div>
+          <div class="layui-tab-item">
+            <form class="layui-form layui-form-pane" action="/mail/sendAttachFileMail" id="sendTextFileForm">
+              <div class="layui-form-item">
+                <label class="layui-form-label">发件人</label>
+                <div class="layui-input-inline">
+                  <input type="text" name="sender" lay-verify="required"  th:value="${sender}" readonly autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">邮件主题</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="subject" lay-verify="required" placeholder="请输入邮件主题" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">接收人</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="recipientStr" lay-verify="required" placeholder="请输入接收人" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+
+              <div class="layui-upload">
+                <button type="button" class="layui-btn" id="test2">多图片上传</button>
+                <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                  预览图：
+                  <div class="layui-upload-list" id="demo2"></div>
+                </blockquote>
+              </div>
+
+              <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">内容</label>
+                <div class="layui-input-block">
+                  <textarea placeholder="请输入内容" id="obj" class="layui-textarea"></textarea>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <button class="layui-btn layui-btn-normal" lay-submit="" type="button" lay-filter="sendTextFile" id="sendTextFile">提交</button>
+              </div>
+
+            </form>
+          </div>
+          <div class="layui-tab-item">
+
+          </div>
+          <!--Freemarker模板发送-->
+          <div class="layui-tab-item">
+            <div class="layui-form-item">
+              <label class="layui-form-label">发件人</label>
+              <div class="layui-input-inline">
+                <input type="text" name="sender" lay-verify="required"  th:value="${sender}" readonly autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">邮件主题</label>
+              <div class="layui-input-inline">
+                <input type="text" id="free_subject" lay-verify="required" placeholder="请输入邮件主题" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">接收人</label>
+              <div class="layui-input-inline">
+                <input type="text" id="free_recipientStr" lay-verify="required" placeholder="请输入接收人" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">员工姓名</label>
+              <div class="layui-input-inline">
+                <input type="text" id="free_name" lay-verify="required" placeholder="请输入员工姓名" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">工号</label>
+              <div class="layui-input-inline">
+                <input type="text" id="free_num" lay-verify="required" placeholder="请输入工号" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">薪资</label>
+              <div class="layui-input-inline">
+                <input type="text" id="free_salary" lay-verify="required" placeholder="请输入薪资" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <button class="layui-btn layui-btn-normal" lay-submit="" type="button" lay-filter="sendTextFile" onclick="freeSend()">提交</button>
+            </div>
+          </div>
+          <!--Thymeleaf模板发送-->
+          <div class="layui-tab-item">
+            <div class="layui-form-item">
+              <label class="layui-form-label">发件人</label>
+              <div class="layui-input-inline">
+                <input type="text" name="sender" lay-verify="required"  th:value="${sender}" readonly autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">邮件主题</label>
+              <div class="layui-input-inline">
+                <input type="text" id="thy_subject" lay-verify="required" placeholder="请输入邮件主题" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">接收人</label>
+              <div class="layui-input-inline">
+                <input type="text" id="thy_recipientStr" lay-verify="required" placeholder="请输入接收人" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">员工姓名</label>
+              <div class="layui-input-inline">
+                <input type="text" id="thy_name" lay-verify="required" placeholder="请输入员工姓名" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">工号</label>
+              <div class="layui-input-inline">
+                <input type="text" id="thy_num" lay-verify="required" placeholder="请输入工号" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">薪资</label>
+              <div class="layui-input-inline">
+                <input type="text" id="thy_salary" lay-verify="required" placeholder="请输入薪资" autocomplete="off" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <button class="layui-btn layui-btn-normal" lay-submit="" type="button" lay-filter="sendTextFile" onclick="thySend()">提交</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+<!--引入js文件-->
+<script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/jquery-2.1.4.js}"></script>
+<script>
+
+  layui.use(['element','form','upload'], function() {
+    //Tab的切换功能，切换事件监听等，需要依赖element模块
+    var  element = layui.element;
+    var form = layui.form;
+    var upload = layui.upload;
+
+    form.on('submit(sendText)', function(data){
+      console.log(JSON.parse(data.field))
+      // $('#sendTextForm').submit();
+    });
+
+    //多图片上传
+    upload.render({
+      elem: '#test2'
+      ,url: '/mail/sendImgResMail' //改成您自己的上传接口
+      ,multiple: true
+      ,auto:false
+      ,bindAction:'#sendTextFile'
+      ,before: function(obj){
+        this.data.subject = $('#subject').val();
+        this.data.recipientStr = $('#recipientStr').val();
+        this.data.obj = $('#obj').val();
+      }
+      ,field:'frontEndFiles'
+      ,choose: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#demo2').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="width: 200px;height: 200px;margin-left: 5px">')
+        });
+      }
+      ,done: function(res){
+        //上传完毕
+      }
+    });
+  })
+
+  /**
+   * Thymeleaf模板发送
+   */
+  function thySend() {
+    var data = {
+      name:$('#thy_name').val(),
+      num:$('#thy_num').val(),
+      salary:$('#thy_salary').val(),
+      subject:$('#thy_subject').val(),
+      recipientStr:$('#thy_recipientStr').val()+';'
+    }
+    console.log(data)
+    var url = '/mail/sendThymeleafMail'
+    commonAjaxPost(url,data,function() {
+      console.log('发送成功！')
+    },function() {
+      console.log('发送失败！')
+    })
+  }
+
+  /**
+   *  Freemarker模板发送
+   */
+  function freeSend() {
+    var data = {
+      name:$('#free_name').val(),
+      num:$('#free_num').val(),
+      salary:$('#free_salary').val(),
+      subject:$('#free_subject').val(),
+      recipientStr:$('#free_recipientStr').val()+';'
+    }
+    console.log(data)
+    var url = '/mail/sendFreemarkerMail'
+    commonAjaxPost(url,data,function() {
+      console.log('发送成功！')
+    },function() {
+      console.log('发送失败！')
+    })
+  }
+
+  /**
+   * 公共请求Ajax方法
+   * @param url
+   * @param data
+   * @param success
+   * @param error
+   */
+  function commonAjaxPost(url,data,success,error) {
+    $.ajax({
+      url:url,
+      dataType:'json',
+      type:'post',
+      data:data,
+      success:success,
+      error:error
+    })
+  }
+</script>
+</html>
