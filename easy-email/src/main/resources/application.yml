@@ -10,7 +10,7 @@ spring:
     host: smtp.qq.com
     port: 587
     username: 756316064@qq.com
-    password: ijkieidasyzzbgaa
+    password: msqwxitdifyubcgf
     # 编码
     default-encoding: UTF-8
     properties:
@@ -34,5 +34,5 @@ spring:
 
 send:
   from: 756316064@qq.com
-  authCode: ijkieidasyzzbgaa
+  authCode: msqwxitdifyubcgf
   sendMail: 756316064@qq.com

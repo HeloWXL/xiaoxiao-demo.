@@ -5,7 +5,7 @@
   <title>Title</title>
 </head>
 <body>
-<p>hello 欢迎加入 KDGC 大家庭，您的入职信息如下：</p>
+<p>hello 欢迎加入大家庭，您的入职信息如下：</p>
 <table border="1">
   <tr>
     <td>姓名</td>

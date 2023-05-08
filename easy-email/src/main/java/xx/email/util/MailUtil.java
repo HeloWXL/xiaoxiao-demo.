@@ -40,7 +40,7 @@ public class MailUtil {
       message.setFrom(mail.getSender());
       message.setTo(mail.getRecipient());
       message.setSentDate(new Date());
-      message.setText(mail.getObj());
+      message.setText(mail.getContent());
       return message;
   }
 
@@ -58,7 +58,7 @@ public class MailUtil {
     helper.setFrom(mail.getSender());
     helper.setTo(mail.getRecipient());
     helper.setSentDate(new Date());
-    helper.setText(mail.getObj(),true);
+    helper.setText(mail.getContent(),true);
     return mimeMessage;
   }
 
@@ -77,7 +77,7 @@ public class MailUtil {
     helper.setFrom(mail.getSender());
     helper.setTo(mail.getRecipient());
     helper.setSentDate(new Date());
-    helper.setText(mail.getObj());
+    helper.setText(mail.getContent());
     helper.addAttachment(mail.getFile().getName(),mail.getFile());
     return mimeMessage;
   }
@@ -96,7 +96,7 @@ public class MailUtil {
     helper.setFrom(mail.getSender());
     helper.setTo(mail.getRecipient());
     helper.setSentDate(new Date());
-    helper.setText(mail.getObj(),true);
+    helper.setText(mail.getContent(),true);
     for (File f:mail.getFiles()){
       helper.addInline(f.getName(),new FileSystemResource(f));
     }

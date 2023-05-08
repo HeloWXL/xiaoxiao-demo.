@@ -1,43 +1,31 @@
 package xx.email.entity;
 
+import lombok.Data;
+
 /**
  * @author wangxl
  * @ClassName User
  * @Description TODO
  * @date 2020/12/23 20:10
  */
+@Data
 public class User {
+  /**
+   * 名称
+   */
   private String name;
+  /**
+   * 数量
+   */
   private Integer num;
+  /**
+   * 薪资
+   */
   private Double salary;
 
   public User(String name, Integer num, Double salary) {
     this.name = name;
     this.num = num;
-    this.salary = salary;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Integer getNum() {
-    return num;
-  }
-
-  public void setNum(Integer num) {
-    this.num = num;
-  }
-
-  public Double getSalary() {
-    return salary;
-  }
-
-  public void setSalary(Double salary) {
     this.salary = salary;
   }
 }
