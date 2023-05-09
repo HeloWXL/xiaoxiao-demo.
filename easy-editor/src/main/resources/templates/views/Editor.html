@@ -50,7 +50,7 @@
             plugins: "lists,hr, advlist,anchor,autolink,autoresize,charmap,code,codesample,emoticons,fullscreen,image,media,insertdatetime,link,pagebreak,paste,preview,print,searchreplace,table,textcolor,toc,visualchars,wordcount", //依赖lists插件
             toolbar: 'bullist numlist anchor charmap emoticons fullscreen hr image insertdatetime link media pagebreak paste preview print searchreplace textcolor wordcount',
             //选中时出现的快捷工具，与插件有依赖关系
-            images_upload_url: '/upload/uploadFile', /*后图片上传接口*/ /*返回值为json类型 {'location':'uploads/jpg'}*/
+            images_upload_url: '/uploadImg', /*后图片上传接口*/ /*返回值为json类型 {'location':'uploads/jpg'}*/
             setup: function (editor) {
                 editor.on('change', function () {
                     editor.save();

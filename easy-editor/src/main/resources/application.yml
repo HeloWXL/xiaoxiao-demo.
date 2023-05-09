@@ -17,3 +17,7 @@ spring:
     #    #配置模板路径，默认是templates，可以不用配置
     prefix: classpath:/templates
     suffix: .html
+
+# 文件存储位置
+file:
+  path: D:/tmp/
