@@ -64,7 +64,7 @@
 
 <!--新增、修改弹窗-->
 <div id="userDialog" style="display: none;padding: 10px">
-    <form class="layui-form">
+    <form class="layui-form" id="userForm">
         <div class="layui-form-item">
             <label class="layui-form-label">用户ID</label>
             <div class="layui-input-block">
@@ -92,13 +92,11 @@
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <button type="button" class="layui-btn" lay-submit lay-filter="userInfo" onclick="user.saveUser()">立即提交</button>
-                <button type="button" class="layui-btn layui-btn-primary">取消</button>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="user.cancleDialog()">取消</button>
             </div>
         </div>
     </form>
 </div>
-
-
 </body>
 
 <!--引入js文件-->

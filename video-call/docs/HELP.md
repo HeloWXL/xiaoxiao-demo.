@@ -9,6 +9,7 @@
 - maven
 - springboot 2.1.1.RELEASE
 - websocket
+- thymeleaf
 
 ## 项目启动
 
@@ -24,7 +25,6 @@
 ![](img/img_3.png)
 
 找到启动类，鼠标右键点击三角形或`虫` 即可；
-
 
 > 访问路径：
 
@@ -137,6 +137,10 @@ RTCPeerConnection向STUN(SessionTraversal Utilities forNAT)/TURN(Traversal Using
 ## 协商流程
 
 ![](img/img_9.png)
+
+# 演示地址
+
+B站：https://www.bilibili.com/video/BV1vP41117pu
 
 # 项目地址
 

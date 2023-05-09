@@ -1,4 +1,4 @@
-# easy-chat
+~~# easy-chat
 
 一个简单的即时通讯demo。
 
@@ -56,6 +56,9 @@ http://localhost:8085/toPage
 
 ![](img/img_4.png)
 
+# 演示地址
+
+B站： https://b23.tv/CGctkMe
 
 # 项目地址 
 
@@ -63,7 +66,7 @@ Gitee: https://gitee.com/HelloWangXianLin/xiaoxiao-demo.git
 
 在easy-chat下哦。
 
-**目前仅做了一个 发送文本的，如需要新增其他内容，请留言哈，**
+**目前仅做了一个 发送文本的，如需要新增其他内容，请留言哈，**~~
 
 
 

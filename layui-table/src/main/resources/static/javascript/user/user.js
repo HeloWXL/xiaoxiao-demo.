@@ -2,6 +2,8 @@ var table = null;
 var form = null;
 var layer = null;
 
+var updateId = null;
+
 $(function () {
 
     user.initLayui();
@@ -50,25 +52,34 @@ var user = {
                         offset: 'auto',
                         content: $('#userDialog'),
                         success: (layero, index) => {
-                            layero.find('.layui-layer-btn').css('text-align', 'center');
                         }
                     })
                     break;
                 // 修改
                 case 'update':
-                    layer.open({
-                        id: 'add',
-                        type: 1,
-                        title: ['修改用户'],
-                        skin: 'layui-layer-molv',
-                        area: '500px',
-                        offset: 'auto',
-                        content: $('#userDialog'),
-                        success: (layero, index) => {
-                            layero.find('.layui-layer-btn').css('text-align', 'center');
-                            form.val("userInfo", data[0]);
-                        }
-                    })
+                    if (data.length === 0) {
+                        layer.msg('请选择一行', {icon: 3, time: 1500})
+                    } else if (data.length > 1) {
+                        layer.msg('只能选择一行', {icon: 3, time: 1500})
+                    } else {
+                        layer.open({
+                            id: 'update',
+                            type: 1,
+                            title: ['修改用户'],
+                            skin: 'layui-layer-molv',
+                            area: '500px',
+                            offset: 'auto',
+                            content: $('#userDialog'),
+                            success: (layero, index) => {
+                                updateId = data[0].id;
+                                form.val("userInfo",  {
+                                    "userId":data[0].userId,
+                                    "userName":data[0].userName
+                                });
+                                console.log(form.val("userInfo"))
+                            }
+                        })
+                    }
                     break;
                 // 删除
                 case 'delete':
@@ -145,6 +156,12 @@ var user = {
     },
 
     /**
+     * 修改
+     */
+    updateUser:()=>{
+
+    },
+    /**
      * 监听提交表单
      */
     saveUser: () => {
@@ -155,6 +172,8 @@ var user = {
                 // 判断提交成功还是失败
                 if (res.code === 0 && res.data) {
                     layer.msg(res.msg, {icon: 1, time: 1500}, () => {
+                        $("#userForm")[0].reset();
+                        form.render();
                         layer.closeAll();
                         table.reload('userList');
                     })
@@ -169,5 +188,12 @@ var user = {
                 layer.msg('服务器内部异常', {icon: 5, time: 1500})
             })
         });
+    },
+
+    /**
+     * 取消
+     */
+    cancleDialog:()=>{
+        layer.closeAll();
     }
 }

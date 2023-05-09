@@ -24,5 +24,5 @@ export function saveOrUpdateUser(params) {
  * @returns {Promise<unknown>}
  */
 export function deleteUser(params) {
-    return post('/user/delete', params)
+    return post('/user/deleteBatch', params)
 }
