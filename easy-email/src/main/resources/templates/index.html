@@ -18,9 +18,7 @@
                 <ul class="layui-tab-title">
                     <li class="layui-this">发送文本</li>
                     <li>发送附件+文本</li>
-                    <li>发送HTML+附件</li>
                     <li>Freemarker模板发送</li>
-                    <li>Thymeleaf模板发送</li>
                 </ul>
                 <div class="layui-tab-content" style="height: 100px;">
                     <!--发送文本-->
@@ -61,7 +59,6 @@
                                         lay-filter="sendText">提交
                                 </button>
                             </div>
-
                         </form>
                     </div>
                     <!--发送附件+文本-->
@@ -112,109 +109,57 @@
 
                         </form>
                     </div>
-                    <!--发送HTML+附件-->
-                    <div class="layui-tab-item">
-
-                    </div>
                     <!--Freemarker模板发送-->
                     <div class="layui-tab-item">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">发件人</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sender" lay-verify="required" th:value="${sender}" readonly
-                                       autocomplete="off" class="layui-input">
+                        <form class="layui-form layui-form-pane" id="sendFreemakerForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">发件人</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="sender" lay-verify="required" th:value="${sender}" readonly
+                                           autocomplete="off" class="layui-input">
+                                </div>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">邮件主题</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sender" lay-verify="required" placeholder="请输入邮件主题"
-                                       autocomplete="off" class="layui-input">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">邮件主题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="subject" lay-verify="required" placeholder="请输入邮件主题"
+                                           autocomplete="off" class="layui-input">
+                                </div>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">接收人</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sender" lay-verify="required" placeholder="请输入接收人"
-                                       autocomplete="off" class="layui-input">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">接收人</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="receiver" lay-verify="required" placeholder="请输入接收人"
+                                           autocomplete="off" class="layui-input">
+                                </div>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">员工姓名</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sender" lay-verify="required" placeholder="请输入员工姓名"
-                                       autocomplete="off" class="layui-input">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">员工姓名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="name" lay-verify="required" placeholder="请输入员工姓名"
+                                           autocomplete="off" class="layui-input">
+                                </div>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">工号</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sender" lay-verify="required" placeholder="请输入工号"
-                                       autocomplete="off" class="layui-input">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">工号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="num" lay-verify="required" placeholder="请输入工号"
+                                           autocomplete="off" class="layui-input">
+                                </div>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">薪资</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sender" lay-verify="required" placeholder="请输入薪资"
-                                       autocomplete="off" class="layui-input">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">薪资</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="salary" lay-verify="required" placeholder="请输入薪资"
+                                           autocomplete="off" class="layui-input">
+                                </div>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <button class="layui-btn layui-btn-normal" lay-submit type="button"
-                                    lay-filter="sendFreemarkerTemplate" onclick="MAIL.sendFreemarkerTemplate()">提交
-                            </button>
-                        </div>
-                    </div>
-                    <!--Thymeleaf模板发送-->
-                    <div class="layui-tab-item">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">发件人</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="sender" lay-verify="required" th:value="${sender}" readonly
-                                       autocomplete="off" class="layui-input">
+                            <div class="layui-form-item">
+                                <button class="layui-btn layui-btn-normal" lay-submit type="button"
+                                        lay-filter="sendFreemarkerTemplate" onclick="MAIL.sendFreemarkerTemplate()">提交
+                                </button>
                             </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">邮件主题</label>
-                            <div class="layui-input-inline">
-                                <input type="text" id="thy_subject" lay-verify="required" placeholder="请输入邮件主题"
-                                       autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">接收人</label>
-                            <div class="layui-input-inline">
-                                <input type="text" id="thy_recipientStr" lay-verify="required" placeholder="请输入接收人"
-                                       autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">员工姓名</label>
-                            <div class="layui-input-inline">
-                                <input type="text" id="thy_name" lay-verify="required" placeholder="请输入员工姓名"
-                                       autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">工号</label>
-                            <div class="layui-input-inline">
-                                <input type="text" id="thy_num" lay-verify="required" placeholder="请输入工号"
-                                       autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">薪资</label>
-                            <div class="layui-input-inline">
-                                <input type="text" id="thy_salary" lay-verify="required" placeholder="请输入薪资"
-                                       autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" type="button"
-                                    lay-filter="sendTextFile" onclick="thySend()">提交
-                            </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -230,7 +175,6 @@
     var element = null;
     var form = null;
     var upload = null;
-
 
     $(() => {
         LayUi.initLayui();
@@ -305,49 +249,38 @@
         sendFileAndText: () => {
 
         },
-        /**Freemarker模板发送
-         *
+        /**
+         * Freemarker模板发送
          */
         sendFreemarkerTemplate: () => {
-
             form.on('submit(sendFreemarkerTemplate)', function (data) {
-
+                var url = '/mail/sendFreemarkerMail'
+                post(url, data.field, res => {
+                    if (res.flag == true) {
+                        layer.msg(res.msg, {icon: 1, time: 1500});
+                    } else {
+                        layer.msg(res.msg, {icon: 5, time: 1500});
+                    }
+                }, error => {
+                    console.error('邮件发送异常', error)
+                    layer.msg('邮件发送异常', {icon: 5, time: 1500});
+                })
             })
-
-            var url = '/mail/sendFreemarkerMail'
-            jsonPost(url, data, res => {
-                if (res.flag == true) {
-                    layer.msg(res.msg, {icon: 1, time: 1500});
-                } else {
-                    layer.msg(res.msg, {icon: 5, time: 1500});
-                }
-            }, error => {
-                console.error('邮件发送异常', error)
-                layer.msg('邮件发送异常', {icon: 5, time: 1500});
-            })
+            return false;
         }
     }
 
-    /**
-     * Thymeleaf模板发送
-     */
-    function thySend() {
-        var data = {
-            name: $('#thy_name').val(),
-            num: $('#thy_num').val(),
-            salary: $('#thy_salary').val(),
-            subject: $('#thy_subject').val(),
-            recipientStr: $('#thy_recipientStr').val() + ';'
-        }
-        console.log(data)
-        var url = '/mail/sendThymeleafMail'
-        commonAjaxPost(url, data, function () {
-            console.log('发送成功！')
-        }, function () {
-            console.log('发送失败！')
+
+    function post(url, data, success, error) {
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'post',
+            data: data,
+            success: success,
+            error: error
         })
     }
-
 
     function jsonPost(url, data, success, error) {
         $.ajax({

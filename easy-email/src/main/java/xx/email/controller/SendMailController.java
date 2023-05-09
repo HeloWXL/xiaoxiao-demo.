@@ -74,8 +74,8 @@ public class SendMailController {
    * @throws IOException
    * @throws TemplateException
    */
-  @GetMapping("sendFreemarkerMail")
-  public Result sendFreemarkerMail(@RequestBody MailDto mailDto, @RequestBody User user) throws MessagingException, IOException, TemplateException {
+  @PostMapping("sendFreemarkerMail")
+  public Result sendFreemarkerMail( MailDto mailDto,  User user) throws TemplateException, IOException  {
     String[] recipient = mailDto.getReceiver().split(";");
     StringWriter out = MailUtil.freeMarkerModel(user);
     try{
@@ -89,18 +89,20 @@ public class SendMailController {
 
 
 
-
 //  /**
 //   * 携带附件发送
 //   * @throws MessagingException
 //   */
 //  @PostMapping("sendAttachFileMail")
 //  public void sendAttachFileMail(MailDto mailDto) throws MessagingException {
-//    String[] recipient = mailDto.getRecipientStr().split(";");
+//    String[] recipient = mailDto.getReceiver().split(";");
 //    mailDto.setRecipient(recipient);
 //    mailDto.setSender(sender);
-////    javaMailSender.send(MailUtil.sendAttachFileMail(javaMailSender,new MailDto("HelloWorld","756316064@qq.com",recipient,"我爱你呀","helloWorld.jpg","C:\\Users\\王咸林\\Documents\\bianhua2\\demo.jpg")));
+//    javaMailSender.send(MailUtil.sendAttachFileMail(javaMailSender,new MailDto("HelloWorld","756316064@qq.com",recipient,"我爱你呀","helloWorld.jpg","C:\\Users\\王咸林\\Documents\\bianhua2\\demo.jpg")));
 //  }
+
+
+
 //
 //  /**
 //   * 发送HTML+附件
@@ -135,19 +137,25 @@ public class SendMailController {
 //  }
 //
 
-//
-//  /**
-//   * todo Thymeleaf模板发送
-//   * @throws MessagingException
-//   */
-//  @GetMapping("sendThymeleafMail")
-//  public void sendThymeleafMail(MailDto mailDto,User user) throws MessagingException {
-//    String[] recipient = mailDto.getRecipientStr().split(";");
-//    Context context = new Context();
-//    context.setVariable("username", user.getName());
-//    context.setVariable("num",user.getNum());
-//    context.setVariable("salary", user.getSalary());
-//    String process = templateEngine.process("mail.html", context);
-//    javaMailSender.send(MailUtil.sendEmailHTML(javaMailSender,new MailDto(mailDto.getSubject(),sender,recipient,process)));
-//  }
+
+  /**
+   * todo Thymeleaf模板发送
+   * @throws MessagingException
+   */
+  @PostMapping("sendThymeleafMail")
+  public Result sendThymeleafMail(MailDto mailDto,User user) {
+    String[] recipient = mailDto.getReceiver().split(";");
+    Context context = new Context();
+    context.setVariable("username", user.getName());
+    context.setVariable("num",user.getNum());
+    context.setVariable("salary", user.getSalary());
+    String process = templateEngine.process("mail.html", context);
+    try{
+        javaMailSender.send(MailUtil.sendEmailHTML(javaMailSender,new MailDto(mailDto.getSubject(),sender,recipient,process)));
+        return Result.success("发送成功");
+    }catch (Exception e){
+        e.printStackTrace();
+        return Result.fail("发送失败");
+    }
+  }
 }
