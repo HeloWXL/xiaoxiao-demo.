@@ -1,27 +1,17 @@
 package xx.email.controller;
 
-import freemarker.template.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+
 import xx.email.entity.MailDto;
 import xx.email.entity.User;
-import xx.email.util.MailUtil;
-import xx.email.util.MultipartFileToFile;
+import xx.email.service.MailService;
 import xx.email.util.Result;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
 
 @RestController
 @RequestMapping("mail")
@@ -33,10 +23,8 @@ public class SendMailController {
     private static Logger logger = LoggerFactory.getLogger(SendMailController.class);
 
     @Resource
-    JavaMailSender javaMailSender;
+    private MailService mailService;
 
-    @Autowired
-    TemplateEngine templateEngine;
 
     @Value("${send.from}")
     private String sender;
@@ -52,39 +40,24 @@ public class SendMailController {
     }
 
     /**
-     * 发送文本
+     * 发送文本邮件
+     * @param mailDto
+     * @return
      */
     @PostMapping("sendText")
     public Result sendSimpleMail(@RequestBody MailDto mailDto) {
-        String[] recipient = mailDto.getReceiver().split(";");
-        mailDto.setRecipient(recipient);
-        mailDto.setSender(sender);
-        try {
-            javaMailSender.send(MailUtil.sendEmailText(mailDto));
-            return Result.success("发送成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.fail("发送失败");
-        }
+        return mailService.sendTextMail(mailDto);
     }
 
-    /**
-   *   Freemarker模板发送
-   * @throws MessagingException
-   * @throws IOException
-   * @throws TemplateException
-   */
+    /**Freemarker模板发送
+     *
+     * @param mailDto
+     * @param user
+     * @return
+     */
   @PostMapping("sendFreemarkerMail")
-  public Result sendFreemarkerMail( MailDto mailDto,  User user) throws TemplateException, IOException  {
-    String[] recipient = mailDto.getReceiver().split(";");
-    StringWriter out = MailUtil.freeMarkerModel(user);
-    try{
-        javaMailSender.send(MailUtil.sendEmailHTML(javaMailSender,new MailDto(mailDto.getSubject(),sender,recipient,out.toString())));
-        return Result.success("发送成功");
-    }catch (Exception e) {
-        e.printStackTrace();
-        return Result.fail("发送失败");
-    }
+  public Result sendFreemarkerMail( MailDto mailDto,  User user)  {
+   return mailService.sendFreemarkerMail(mailDto,user);
   }
 
 
@@ -100,7 +73,6 @@ public class SendMailController {
 //    mailDto.setSender(sender);
 //    javaMailSender.send(MailUtil.sendAttachFileMail(javaMailSender,new MailDto("HelloWorld","756316064@qq.com",recipient,"我爱你呀","helloWorld.jpg","C:\\Users\\王咸林\\Documents\\bianhua2\\demo.jpg")));
 //  }
-
 
 
 //
@@ -136,26 +108,4 @@ public class SendMailController {
 ////    javaMailSender.send(MailUtil.sendImgResMail(javaMailSender,new MailDto("HelloWorld","756316064@qq.com",recipient,html,map)));
 //  }
 //
-
-
-  /**
-   * todo Thymeleaf模板发送
-   * @throws MessagingException
-   */
-  @PostMapping("sendThymeleafMail")
-  public Result sendThymeleafMail(MailDto mailDto,User user) {
-    String[] recipient = mailDto.getReceiver().split(";");
-    Context context = new Context();
-    context.setVariable("username", user.getName());
-    context.setVariable("num",user.getNum());
-    context.setVariable("salary", user.getSalary());
-    String process = templateEngine.process("mail.html", context);
-    try{
-        javaMailSender.send(MailUtil.sendEmailHTML(javaMailSender,new MailDto(mailDto.getSubject(),sender,recipient,process)));
-        return Result.success("发送成功");
-    }catch (Exception e){
-        e.printStackTrace();
-        return Result.fail("发送失败");
-    }
-  }
 }

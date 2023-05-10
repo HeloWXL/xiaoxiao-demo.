@@ -9,7 +9,7 @@
 <table border="1">
   <tr>
     <td>姓名</td>
-    <td style="font-size: 30x;font-weight: bold">${name}</td>
+    <td style="font-size: 30px;font-weight: bold">${name}</td>
   </tr>
   <tr>
     <td>工号</td>
