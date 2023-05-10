@@ -23,4 +23,4 @@ spring:
 
 # 文件存储位置
 file:
-  path: D:/tmp/
+  path: F:/tmp/
