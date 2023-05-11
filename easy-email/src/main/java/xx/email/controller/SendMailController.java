@@ -4,14 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import xx.email.entity.MailDto;
 import xx.email.entity.User;
 import xx.email.service.MailService;
+import xx.email.util.MultipartFileToFile;
 import xx.email.util.Result;
 
 import javax.annotation.Resource;
+import java.io.File;
 
 @RestController
 @RequestMapping("mail")
@@ -41,6 +44,7 @@ public class SendMailController {
 
     /**
      * 发送文本邮件
+     *
      * @param mailDto
      * @return
      */
@@ -49,30 +53,50 @@ public class SendMailController {
         return mailService.sendTextMail(mailDto);
     }
 
-    /**Freemarker模板发送
+
+    /**
+     * 发送HTMl 片段
+     *
+     * @param mailDto
+     * @return
+     */
+    @PostMapping("sendHTML")
+    public Result sendHTML(@RequestBody MailDto mailDto) {
+        return mailService.sendHTMLMail(mailDto);
+    }
+
+    /**
+     * 发送附件邮件
+     *
+     * @param mailDto
+     * @return
+     */
+    @PostMapping("sendFile")
+    public Result sendFileMail(MailDto mailDto, MultipartFile multipartFile) {
+        try {
+            File file = MultipartFileToFile.multipartFileToFile(multipartFile);
+            if (file == null) {
+                return Result.fail("发送失败");
+            }
+            mailDto.setFile(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("MultipartFile To File ERROR");
+        }
+        return mailService.sendAttachFileMail(mailDto);
+    }
+
+    /**
+     * Freemarker模板发送
      *
      * @param mailDto
      * @param user
      * @return
      */
-  @PostMapping("sendFreemarkerMail")
-  public Result sendFreemarkerMail( MailDto mailDto,  User user)  {
-   return mailService.sendFreemarkerMail(mailDto,user);
-  }
-
-
-
-//  /**
-//   * 携带附件发送
-//   * @throws MessagingException
-//   */
-//  @PostMapping("sendAttachFileMail")
-//  public void sendAttachFileMail(MailDto mailDto) throws MessagingException {
-//    String[] recipient = mailDto.getReceiver().split(";");
-//    mailDto.setRecipient(recipient);
-//    mailDto.setSender(sender);
-//    javaMailSender.send(MailUtil.sendAttachFileMail(javaMailSender,new MailDto("HelloWorld","756316064@qq.com",recipient,"我爱你呀","helloWorld.jpg","C:\\Users\\王咸林\\Documents\\bianhua2\\demo.jpg")));
-//  }
+    @PostMapping("sendFreemarkerMail")
+    public Result sendFreemarkerMail(MailDto mailDto, User user) {
+        return mailService.sendFreemarkerMail(mailDto, user);
+    }
 
 
 //

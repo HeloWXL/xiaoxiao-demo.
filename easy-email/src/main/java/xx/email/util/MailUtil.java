@@ -45,25 +45,6 @@ public class MailUtil {
   }
 
   /**
-   * todo 发送HTML
-   * @param javaMailSender
-   * @param mail
-   * @return
-   * @throws MessagingException
-   */
-  public static MimeMessage sendEmailHTML(JavaMailSender javaMailSender,MailDto mail) throws MessagingException {
-    MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-    helper.setSubject(mail.getSubject());
-    helper.setFrom(mail.getSender());
-    helper.setTo(mail.getRecipient());
-    helper.setSentDate(new Date());
-    helper.setText(mail.getContent(),true);
-    return mimeMessage;
-  }
-
-
-  /**
    * todo 发送附件+文本
    * @param javaMailSender
    * @param mail
@@ -81,6 +62,27 @@ public class MailUtil {
     helper.addAttachment(mail.getFile().getName(),mail.getFile());
     return mimeMessage;
   }
+
+  /**
+   * todo 发送HTML
+   * @param javaMailSender
+   * @param mail
+   * @return
+   * @throws MessagingException
+   */
+  public static MimeMessage sendHTMLEmail(JavaMailSender javaMailSender,MailDto mail) throws MessagingException {
+    MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+    helper.setSubject(mail.getSubject());
+    helper.setFrom(mail.getSender());
+    helper.setTo(mail.getRecipient());
+    helper.setSentDate(new Date());
+    helper.setText(mail.getContent(),true);
+    return mimeMessage;
+  }
+
+
+
 
   /**
    * todo 发送多个附件

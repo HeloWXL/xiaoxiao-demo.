@@ -17,6 +17,7 @@
             <div class="layui-tab layui-tab-brief">
                 <ul class="layui-tab-title">
                     <li class="layui-this">发送文本</li>
+                    <li>发送HTML</li>
                     <li>发送附件+文本</li>
                     <li>Freemarker模板发送</li>
                 </ul>
@@ -61,9 +62,49 @@
                             </div>
                         </form>
                     </div>
+                    <!--发送HTML-->
+                    <div class="layui-tab-item layui-show">
+                        <form class="layui-form layui-form-pane" id="sendHTMLForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">发件人</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="sender" lay-verify="required" placeholder="请输入接收人"
+                                           autocomplete="off" th:value="${sender}" readonly class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">邮件主题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="subject" lay-verify="required" placeholder="请输入邮件主题"
+                                           autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">接收人</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="receiver" lay-verify="required"
+                                           placeholder="请输入接收人,多个接收人用;隔开"
+                                           autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">HTML片段</label>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="请输入HTML片段" name="content" class="layui-textarea"
+                                              lay-verify="required"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn layui-btn-normal" lay-submit type="button"
+                                        onclick="MAIL.sendHTML()"
+                                        lay-filter="sendHTML">提交
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                     <!--发送附件+文本-->
                     <div class="layui-tab-item">
-                        <form class="layui-form layui-form-pane" action="/mail/sendAttachFileMail"
+                        <form class="layui-form layui-form-pane"
                               id="sendTextFileForm">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">发件人</label>
@@ -75,38 +116,33 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">邮件主题</label>
                                 <div class="layui-input-block">
-                                    <input type="text" id="subject" lay-verify="required" placeholder="请输入邮件主题"
+                                    <input type="text" name="subject" lay-verify="required" placeholder="请输入邮件主题"
                                            autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">接收人</label>
                                 <div class="layui-input-block">
-                                    <input type="text" id="recipientStr" lay-verify="required" placeholder="请输入接收人"
+                                    <input type="text" name="receiver" lay-verify="required"
+                                           placeholder="请输入接收人,多个接收人用;隔开"
                                            autocomplete="off" class="layui-input">
                                 </div>
                             </div>
-
-                            <div class="layui-upload">
-                                <button type="button" class="layui-btn" id="test2">多图片上传</button>
-                                <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-                                    预览图：
-                                    <div class="layui-upload-list" id="demo2"></div>
-                                </blockquote>
+                            <div class="layui-btn-container">
+                                <input type="file" class="layui-btn layui-btn-normal" id="file">选择文件</input>
                             </div>
-
                             <div class="layui-form-item layui-form-text">
                                 <label class="layui-form-label">内容</label>
                                 <div class="layui-input-block">
-                                    <textarea placeholder="请输入内容" id="obj" class="layui-textarea"></textarea>
+                                    <textarea placeholder="请输入内容" name="content" lay-verify="required"
+                                              class="layui-textarea"></textarea>
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <button class="layui-btn layui-btn-normal" lay-submit="" type="button"
-                                        lay-filter="sendTextFile" id="sendTextFile">提交
+                                <button class="layui-btn layui-btn-normal" lay-submit type="button"
+                                        lay-filter="sendTextFile" id="sendTextFile" onclick="MAIL.sendFileAndText()">提交
                                 </button>
                             </div>
-
                         </form>
                     </div>
                     <!--Freemarker模板发送-->
@@ -232,7 +268,30 @@
                 var obj = data.field;
                 jsonPost('/mail/sendText', obj, res => {
                     if (res.flag == true) {
-                        layer.msg(res.msg, {icon: 1, time: 1500});
+                        layer.msg(res.msg, {icon: 1, time: 1500},()=>{
+                            $('#sendTextForm').reset();
+                        });
+                    } else {
+                        layer.msg(res.msg, {icon: 5, time: 1500});
+                    }
+                    form.reset();
+                }, error => {
+                    console.error('邮件发送异常', error)
+                    layer.msg('邮件发送异常', {icon: 5, time: 1500});
+                })
+            });
+        },
+        /**
+         * 发送HTML片段
+         */
+        sendHTML:()=>{
+            form.on('submit(sendHTML)', function (data) {
+                var obj = data.field;
+                jsonPost('/mail/sendHTML', obj, res => {
+                    if (res.flag == true) {
+                        layer.msg(res.msg, {icon: 1, time: 1500},()=>{
+                            $('#sendHTMLForm').reset();
+                        });
                     } else {
                         layer.msg(res.msg, {icon: 5, time: 1500});
                     }
@@ -247,7 +306,30 @@
          * 发送附件+文本
          */
         sendFileAndText: () => {
+            form.on('submit(sendTextFile)', function (data) {
+                console.log(data.field)
+                var formdata = new FormData();
+                formdata.append('multipartFile', $('#file')[0].files[0]);
+                formdata.append('subject', data.field.subject);
+                formdata.append('sender', data.field.sender);
+                formdata.append('receiver', data.field.receiver);
+                formdata.append('content', data.field.content);
+                var url = '/mail/sendFile'
+                uploadPost(url, formdata, res => {
+                    if (res.flag == true) {
+                        layer.msg(res.msg, {icon: 1, time: 1500},()=>{
+                            $('#sendTextFileForm').reset();
+                            $('#file').val();
+                        });
 
+                    } else {
+                        layer.msg(res.msg, {icon: 5, time: 1500});
+                    }
+                }, error => {
+                    console.error('邮件发送异常', error)
+                    layer.msg('邮件发送异常', {icon: 5, time: 1500});
+                })
+            })
         },
         /**
          * Freemarker模板发送
@@ -270,6 +352,19 @@
         }
     }
 
+    function uploadPost(url, data, success, error){
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'post',
+            data: data,
+            cache:false,
+            processData: false,
+            contentType: false,
+            success: success,
+            error: error
+        })
+    }
 
     function post(url, data, success, error) {
         $.ajax({

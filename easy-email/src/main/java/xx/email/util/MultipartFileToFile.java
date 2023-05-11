@@ -14,11 +14,17 @@ import java.io.OutputStream;
  * @date 2020/12/28 16:58
  */
 public class MultipartFileToFile {
-  public static File multipartFileToFile(MultipartFile file) throws Exception {
 
+  /**
+   * MultipartFile To File
+   * @param file
+   * @return
+   * @throws Exception
+   */
+  public static File multipartFileToFile(MultipartFile file) throws Exception {
     File toFile = null;
     if (file.equals("") || file.getSize() <= 0) {
-      file = null;
+      toFile = null;
     } else {
       InputStream ins = null;
       ins = file.getInputStream();

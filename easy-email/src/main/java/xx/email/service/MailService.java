@@ -14,6 +14,7 @@ import xx.email.util.MailUtil;
 import xx.email.util.Result;
 
 import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -38,12 +39,12 @@ public class MailService {
 
     /**
      * 发送文本邮件
+     *
      * @param mailDto
      * @return
      */
-    public Result sendTextMail(MailDto mailDto){
-        String[] recipient = mailDto.getReceiver().split(";");
-        mailDto.setRecipient(recipient);
+    public Result sendTextMail(MailDto mailDto) {
+        getRecipient(mailDto);
         mailDto.setSender(sender);
         try {
             javaMailSender.send(MailUtil.sendEmailText(mailDto));
@@ -55,12 +56,50 @@ public class MailService {
     }
 
     /**
+     * 发送文本邮件
+     * @param mailDto
+     * @return
+     */
+    public Result sendHTMLMail(MailDto mailDto) {
+        getRecipient(mailDto);
+        mailDto.setSender(sender);
+        try {
+            javaMailSender.send(MailUtil.sendHTMLEmail(javaMailSender,mailDto));
+            return Result.success("发送成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("发送失败");
+        }
+    }
+
+
+    /**
+     * 发送附件
+     *
+     * @param mailDto
+     * @return
+     */
+    public Result sendAttachFileMail(MailDto mailDto) {
+        getRecipient(mailDto);
+        mailDto.setSender(sender);
+        try {
+            MimeMessage mimeMessage = MailUtil.sendAttachFileMail(javaMailSender, mailDto);
+            javaMailSender.send(mimeMessage);
+            return Result.success("发送成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("发送失败");
+        }
+    }
+
+    /**
      * Freemarker模板发送
+     *
      * @param mailDto
      * @param user
      * @return
      */
-    public Result sendFreemarkerMail(MailDto mailDto,  User user){
+    public Result sendFreemarkerMail(MailDto mailDto, User user) {
         String[] recipient = mailDto.getReceiver().split(";");
         StringWriter out = null;
         try {
@@ -71,14 +110,18 @@ public class MailService {
             e.printStackTrace();
             logger.error("模板识别失败");
         }
-        try{
-            javaMailSender.send(MailUtil.sendEmailHTML(javaMailSender,new MailDto(mailDto.getSubject(),sender,recipient,out.toString())));
+        try {
+            javaMailSender.send(MailUtil.sendHTMLEmail(javaMailSender, new MailDto(mailDto.getSubject(), sender, recipient, out.toString())));
             return Result.success("发送成功");
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.fail("发送失败");
         }
     }
 
 
+    public static void getRecipient(MailDto mailDto) {
+        String[] recipient = mailDto.getReceiver().split(";");
+        mailDto.setRecipient(recipient);
+    }
 }

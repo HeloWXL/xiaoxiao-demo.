@@ -9,8 +9,8 @@ spring:
   mail:
     host: smtp.qq.com
     port: 587
-    username: 你的邮箱
-    password: 邮箱秘钥
+    username: 756316064@qq.com
+    password: msqwxitdifyubcgf
     # 编码
     default-encoding: UTF-8
     properties:
@@ -33,6 +33,6 @@ spring:
 
 
 send:
-  from: 你的邮箱
-  authCode: 邮箱秘钥
-  sendMail: 你的邮箱
+  from: 756316064@qq.com
+  authCode: msqwxitdifyubcgf
+  sendMail: 756316064@qq.com
