@@ -55,7 +55,6 @@
         </el-pagination>
       </el-col>
     </el-row>
-
     <!--文件上传-->
     <upload-dialog ref="uploadDialog"></upload-dialog>
     <!--文件预览-->

@@ -6,6 +6,13 @@ server:
 
 # Spring 相关配置
 spring:
+  # 数据源配置
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/halo?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
   # 模板引擎配置
   thymeleaf:
     #模板的模式，支持 HTML, XML TEXT JAVASCRIPT
