@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>留言表</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
+    <style>
+        .layui-layer-molv .layui-layer-title{
+            background: #1E9FFF;
+        }
+         .layui-input-block{
+            margin-left: 0px;
+        }
+        .leave-list{
+            background-color: #1E9FFF;
+            font-size: 20px;
+        }
+
+        .leave-list li{
+            margin: 25px;
+            height: 100%;
+        }
+
+        .user-name{
+            line-height: 30px;
+            height: 30px;
+            font-weight: bold;
+            color: #FFB800;
+        }
+
+        .leavetime{
+            line-height: 20px;
+            margin-top: 5px;
+            height: 20px;
+            font-size: 14px;
+            color: gray;
+        }
+
+        .question{
+            color: white;
+            padding: 10px;
+        }
+
+
+    </style>
+</head>
+<body>
+<!-- 模块名 -->
+<div class="layui-main">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <!-- 模块名 -->
+            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">留言</blockquote>
+            <div class="top">
+                <form class="layui-form">
+                    <div class="layui-form-item layui-form-text" id="leave-container">
+                        <div class="layui-input-block">
+                            <textarea placeholder="请输入留言内容" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn layui-btn-normal" id="leaveBtn">发布</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">留言板</blockquote>
+            <div class="leave-list">
+                <ul>
+                    <li>
+                        <div class="user-name">
+                            <i class="layui-icon layui-icon-username"></i> halo
+                        </div>
+                        <div class="question">
+                            pom里面加上这个配置， 这个意思大概就是忽略 yml文件中的中文注释
+                        </div>
+                        <div class="leavetime">
+                            <i class="layui-icon layui-icon-time"></i>
+                            2023-05-19 12:22:21
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="user-name">
+                            halo
+                        </div>
+                        <div class="question">
+                            pom里面加上这个配置， 这个意思大概就是忽略 yml文件中的中文注释
+                        </div>
+                        <div class="leavetime">
+                            2023-05-19 12:22:21
+                        </div>
+                    </li>
+
+
+                    <li>
+                        <div class="user-name">
+                            halo
+                        </div>
+                        <div class="question">
+                            pom里面加上这个配置， 这个意思大概就是忽略 yml文件中的中文注释
+                        </div>
+                        <div class="leavetime">
+                            2023-05-19 12:22:21
+                        </div>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<!--引入js文件-->
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/util/httpUtil.js}"></script>
+<script>
+
+
+
+
+</script>
+</html>
