@@ -276,8 +276,6 @@
                     } else {
                         layer.msg(res.msg, {icon: 5, time: 1500});
                     }
-
-                    form.reset();
                 }, error => {
                     console.error('邮件发送异常', error)
                     layer.msg('邮件发送异常', {icon: 5, time: 1500});
@@ -300,7 +298,6 @@
                     } else {
                         layer.msg(res.msg, {icon: 5, time: 1500});
                     }
-                    form.reset();
                 }, error => {
                     console.error('邮件发送异常', error)
                     layer.msg('邮件发送异常', {icon: 5, time: 1500});
