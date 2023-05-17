@@ -3,14 +3,14 @@
     <el-container>
       <el-container>
         <el-aside width="400px">
-          <chat-aside ref="chatAside"></chat-aside>
+          <chat-aside ref="chatAside" @initServer="initServer"></chat-aside>
         </el-aside>
         <el-container>
           <el-main>
             <chat-main ref="chatMain"></chat-main>
           </el-main>
           <el-footer>
-            <chat-footer ref="chatFooter"></chat-footer>
+            <chat-footer ref="chatFooter" @sendMsg="sendMsg"></chat-footer>
           </el-footer>
         </el-container>
       </el-container>
@@ -22,6 +22,7 @@
 import ChatAside from "@/components/ChatAside";
 import ChatMain from "@/components/ChatMain";
 import ChatFooter from "@/components/ChatFooter";
+import {socket} from "@/socket/socket";
 
 export default {
   name: "ChatIndex",
@@ -31,31 +32,57 @@ export default {
     ChatFooter
   },
   data() {
-    return {}
+    return {
+
+    }
   },
   created() {
 
   },
-  methods: {}
+  methods: {
+    /**
+     * 连接服务器
+     */
+    initServer(userId) {
+      let that = this;
+      socket.ws_url = that.$wsServerUrl + userId;
+      // 开始建立连接
+      socket.init();
+      // 设置连接成功时回调
+      socket.successCallBack(() => {
+        this.$notify.success('连接成功')
+      });
+      // 重写Socket中的消息接收方法
+      socket.receive = (msg) => {
+        msg = JSON.parse(msg.data);
+        console.log(msg)
+      };
+    },
+    sendMsg(msg,succCallback){
+      socket.send(msg,succCallback);
+    }
+  }
 }
 </script>
 
 <style scoped>
-.chat-container{
+.chat-container {
   background-color: #D3D5D3;
 }
 
-.header{
+.header {
   padding: 5px;
 }
 
-.aside{
+.aside {
   padding: 5px;
 }
-.main{
+
+.main {
   margin-top: 5px;
   padding: 5px;
 }
+
 .el-footer {
   padding: 10px 20px;
 }

@@ -64,7 +64,7 @@ export default {
 .chat-main {
   background: #6CA1FA;
   overflow: auto;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 160px);
   /*background-color: white;*/
   border-radius: 5px;
 }

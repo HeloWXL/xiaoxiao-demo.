@@ -19,7 +19,9 @@ export default {
         let obj = {
           content:this.content
         }
-        this.$emit('sendMsg',obj);
+        this.$emit('sendMsg',obj,()=>{
+          this.clearContent();
+        });
       }
     },
     /**
@@ -35,7 +37,7 @@ export default {
 <style scoped>
 .footer-send-btn{
   position: absolute;
-  bottom: -44px;
+  bottom: 67px;
   right: 35px;
   height: 30px;
 }

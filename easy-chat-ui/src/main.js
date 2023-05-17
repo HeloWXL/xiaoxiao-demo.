@@ -10,6 +10,8 @@ Vue.use(ElementUI);
 
 import router from './router'
 
+Vue.prototype.$wsServerUrl =  'ws://localhost:8085/chat/'
+
 new Vue({
   render: h => h(App),
   router
