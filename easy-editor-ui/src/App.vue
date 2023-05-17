@@ -1,17 +1,15 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <quill-editor ref="quillEditor" class="quill-editor"></quill-editor>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import QuillEditor from './components/QuillEditor.vue'
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    QuillEditor
   }
 }
 </script>
@@ -24,5 +22,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  height: 100%;
+}
+.quill-editor{
+  height: 400px;
 }
 </style>

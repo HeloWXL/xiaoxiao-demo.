@@ -1,160 +1,225 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Echarts图表</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
-    <style>
-        .echart-div{
-            height: 500px;
-            width: 500px;
-            /* 水平垂直居中 */
-            margin:  auto;
-        }
-        .echart-container{
-            width: 100%;
-            text-align: center;
-        }
-    </style>
+    <title>聊天室</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/client.css}">
 </head>
 <body>
-<div class="layui-main" style="width: 100%;">
+<div class="layui-container">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 25px;">
+        <legend style="margin-left: 40%;">聊天室</legend>
+    </fieldset>
+    <div class="layui-row layui-col-space5">
+        <div class="layui-col-md4">
+            <blockquote class="layui-elem-quote">用户信息</blockquote>
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户Id</label>
+                        <div class="layui-input-inline">
+                            <input id="userId" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">接收人Id</label>
+                        <div class="layui-input-inline">
+                            <input id="toUserId" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" onclick="SOCKET.start()" type="button">建立连接</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-col-md8">
+            <blockquote class="layui-elem-quote">接收信息区</blockquote>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>消息记录</legend>
+            </fieldset>
+            <div class="layui-tab layui-tab-card" style="height: 200px;">
+                <div id="msgDiv" class="scroller">
 
-    <div class="layui-row layui-col-space1">
-        <div class="layui-col-md4">
-            <!-- 模块名 -->
-            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">折线图</blockquote>
-            <div class="echart-container" style="margin-top: 10px">
-                <div class="echart-div" id="line"></div>
+                </div>
             </div>
         </div>
-        <div class="layui-col-md4">
-            <!-- 模块名 -->
-            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">柱状图</blockquote>
-            <div class="echart-container" style="margin-top: 10px">
-                <div class="echart-div" id="bar"></div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">消息</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入内容" class="layui-textarea" id="msg"></textarea>
+                </div>
             </div>
-        </div>
-        <div class="layui-col-md4">
-            <!-- 模块名 -->
-            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">饼图</blockquote>
-            <div class="echart-container" style="margin-top: 10px">
-                <div class="echart-div" id="pie"></div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn layui-btn-normal" onclick="SOCKET.sendMsg()">发送消息</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-</body>
-<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
-<script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
-<script type="text/javascript" th:src="@{/plugins/echart/echarts.min.js}"></script>
+<script type="application/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+<!--layui-->
+<script type="application/javascript" th:src="@{/plugins/layui/layui.js}"></script>
 <script>
-    $(function () {
-        ECHART.init();
-    })
+    var ws = null;
+    var layer = null;
 
-    /**
-     * 图表
-     */
-    var ECHART = {
+    $(function () {
+        Layui.init();
+    });
+
+    var Layui = {
+        /**
+         * 初始化layui
+         */
         init:()=>{
-            ECHART.drawPie();
-            ECHART.drawLine();
-            ECHART.drawBar();
-        },
-        /**
-         * 绘制折线图
-         */
-        drawLine: () => {
-            var chartDom = document.getElementById('line');
-            var myChart = echarts.init(chartDom);
-            let option = {
-                xAxis: {
-                    type: 'category',
-                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: [150, 230, 224, 218, 135, 147, 260],
-                        type: 'line'
-                    }
-                ]
-            };
-            myChart.setOption(option);
-        },
-        /**
-         * 绘制柱状图
-         */
-        drawBar: () =>{
-            var chartDom = document.getElementById('bar');
-            var myChart = echarts.init(chartDom);
-            let option = {
-                xAxis: {
-                    type: 'category',
-                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: [120, 200, 150, 80, 70, 110, 130],
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        }
-                    }
-                ]
-            };
-            myChart.setOption(option);
-        },
-        /**
-         * 绘制饼图
-         */
-        drawPie: () => {
-            var chartDom = document.getElementById('pie');
-            var myChart = echarts.init(chartDom);
-            let option = {
-                title: {
-                    text: '文章数据统计',
-                    subtext: '统计',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left'
-                },
-                series: [
-                    {
-                        name: 'Access From',
-                        type: 'pie',
-                        radius: '50%',
-                        data: [
-                            {value: 1048, name: 'Search Engine'},
-                            {value: 735, name: 'Direct'},
-                            {value: 580, name: 'Email'},
-                            {value: 484, name: 'Union Ads'},
-                            {value: 300, name: 'Video Ads'}
-                        ],
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-            myChart.setOption(option);
+            layui.use(['layer'], function () {
+                layer = layui.layer;
+            });
         }
     }
 
+    /**
+     * WebSocket 相关
+     */
+    var SOCKET = {
+
+        /**
+         * 存放消息div
+         */
+        $msgDiv: $("#msgDiv"),
+        /**
+         * websocket对象
+         */
+        ws: null,
+        /**
+         * websocket 连接地址
+         */
+        url: "" + window.location.protocol + "//" + window.location.host + "/chat/" ,
+        /**
+         * 开始建立连接
+         * @returns {boolean}
+         */
+        start: () => {
+            if (typeof (WebSocket) == "undefined") {
+                layer.msg('您的浏览器不支持WebSocket', {icon: 5, time: 1500})
+                return false;
+            }
+            var userId = $("#userId").val();
+            if (userId === '' || userId == null) {
+                layer.msg('请输入您的用户Id', {icon: 5, time: 1500})
+                return false;
+            }
+            SOCKET.url = SOCKET.url.replace("https", "ws").replace("http", "ws");
+            //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+            if (SOCKET.ws != null) {
+                SOCKET.ws.close();
+                SOCKET.ws = null;
+            }
+            SOCKET.ws = new WebSocket(SOCKET.url+userId);
+            //打开事件
+            SOCKET.ws.onopen = SOCKET.onOpen;
+            //关闭事件
+            SOCKET.ws.onclose = SOCKET.onClose;
+            //发生了错误事件
+            SOCKET.ws.onerror = SOCKET.onError;
+            // 接收消息
+            SOCKET.ws.onmessage = SOCKET.onMessage;
+        },
+        /**
+         * 成功建立
+         */
+        onOpen: () => {
+            layer.msg('已建立WebSocket连接', {icon: 1, time: 1500})
+        },
+        /**
+         * 接收服务端推送消息
+         */
+        onMessage: (msg) => {
+            msg = JSON.parse(msg.data)
+            SOCKET.$msgDiv.append('' +
+                '<div class="other-msg-container">' +
+                '   <img class="left-img" src="/images/left.png">' +
+                '   <div class="other-msg msg-common">' +
+                '       <p class="user">用户名：' + msg.sender + '</p><p class="chat">' + msg.msg + '</p>' +
+                '   </div>' +
+                '</div>');
+            SOCKET.scroolBottom();
+        },
+        /**
+         * 连接发生错误
+         */
+        onError: () => {
+            layer.msg('websocket发生了错误', {icon: 5, time: 1500})
+        },
+        /**
+         * 连接关闭
+         */
+        onClose: () => {
+            layer.msg('websocket已关闭', {icon: 5, time: 1500})
+        },
+        /**
+         * 发送消息
+         */
+        sendMsg:()=>{
+
+            var msg = $("#msg").val();
+            if (msg === '' || msg == null) {
+                layer.msg('消息内容不能为空', {icon: 5, time: 1500});
+                return;
+            }
+            var receiver = $("#toUserId").val();
+            if (receiver === '' || receiver == null) {
+                layer.msg('请输入接收人', {icon: 5, time: 1500});
+                return;
+            }
+            var msgObj = {
+                "receiver": receiver,
+                "msg": msg
+            };
+            if(SOCKET.ws && SOCKET.ws.readyState === 1){
+                SOCKET.ws.send(JSON.stringify(msgObj));
+                SOCKET.$msgDiv.append('' +
+                    '<div class="my-msg-container">' +
+                    '   <img class="right-img" src="/images/right.png">' +
+                    '   <div class="my-msg msg-common">' +
+                    '       <p class="user">用户名：' + $("#userId").val() + '</p><p class="chat">' + msgObj.msg + '</p>' +
+                    '   </div>' +
+                    '</div>');
+                SOCKET.scroolBottom();
+                $("#msg").val('')
+            }else{
+                layer.msg('请检查连接是否正常？', {icon: 5,time: 1500});
+            }
+        },
+        /**
+         * 滚动至底部
+         */
+        scroolBottom:()=>{
+            var $div = document.getElementById("msgDiv");
+            $div.scrollTop = $div.scrollHeight;
+        },
+        /**
+         * 断开连接
+         */
+        disConnect:()=>{
+            if(SOCKET.ws){
+                SOCKET.ws.close();
+            }
+        }
+    }
+
+    window.onbeforeunload  = function (){
+        SOCKET.disConnect();
+    }
+
 </script>
+</body>
+</html>
