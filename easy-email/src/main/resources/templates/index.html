@@ -63,7 +63,7 @@
                         </form>
                     </div>
                     <!--发送HTML-->
-                    <div class="layui-tab-item layui-show">
+                    <div class="layui-tab-item">
                         <form class="layui-form layui-form-pane" id="sendHTMLForm">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">发件人</label>
@@ -266,14 +266,17 @@
         sendText: () => {
             form.on('submit(sendText)', function (data) {
                 var obj = data.field;
+                var index = layer.load();
                 jsonPost('/mail/sendText', obj, res => {
+                    layer.close(index)
                     if (res.flag == true) {
                         layer.msg(res.msg, {icon: 1, time: 1500},()=>{
-                            $('#sendTextForm').reset();
+                            $('#sendTextForm')[0].reset();
                         });
                     } else {
                         layer.msg(res.msg, {icon: 5, time: 1500});
                     }
+
                     form.reset();
                 }, error => {
                     console.error('邮件发送异常', error)
@@ -287,10 +290,12 @@
         sendHTML:()=>{
             form.on('submit(sendHTML)', function (data) {
                 var obj = data.field;
+                var index = layer.load();
                 jsonPost('/mail/sendHTML', obj, res => {
+                    layer.close(index)
                     if (res.flag == true) {
                         layer.msg(res.msg, {icon: 1, time: 1500},()=>{
-                            $('#sendHTMLForm').reset();
+                            $('#sendHTMLForm')[0].reset();
                         });
                     } else {
                         layer.msg(res.msg, {icon: 5, time: 1500});
@@ -307,7 +312,7 @@
          */
         sendFileAndText: () => {
             form.on('submit(sendTextFile)', function (data) {
-                console.log(data.field)
+                var index = layer.load();
                 var formdata = new FormData();
                 formdata.append('multipartFile', $('#file')[0].files[0]);
                 formdata.append('subject', data.field.subject);
@@ -316,9 +321,10 @@
                 formdata.append('content', data.field.content);
                 var url = '/mail/sendFile'
                 uploadPost(url, formdata, res => {
+                    layer.close(index)
                     if (res.flag == true) {
                         layer.msg(res.msg, {icon: 1, time: 1500},()=>{
-                            $('#sendTextFileForm').reset();
+                            $('#sendTextFileForm')[0].reset();
                             $('#file').val();
                         });
 
@@ -337,9 +343,13 @@
         sendFreemarkerTemplate: () => {
             form.on('submit(sendFreemarkerTemplate)', function (data) {
                 var url = '/mail/sendFreemarkerMail'
+                var index = layer.load();
                 post(url, data.field, res => {
+                    layer.close(index)
                     if (res.flag == true) {
-                        layer.msg(res.msg, {icon: 1, time: 1500});
+                        layer.msg(res.msg, {icon: 1, time: 1500},function (){
+                            $('#sendFreemakerForm')[0].reset();
+                        });
                     } else {
                         layer.msg(res.msg, {icon: 5, time: 1500});
                     }

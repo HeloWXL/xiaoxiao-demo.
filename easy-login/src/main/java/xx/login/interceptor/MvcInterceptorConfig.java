@@ -24,7 +24,13 @@ public class MvcInterceptorConfig implements WebMvcConfigurer {
         //todo 添加不拦截路径
         registration.excludePathPatterns(
                 //todo 不进行拦截的页面
-                "/login","/doLogin"
+                "/error",
+                "/login",
+                "/doRegister",
+                "/doLogin",
+                "/**/*.css",
+                "/**/*.js",
+                "/**/*.png"
         );
     }
 }
