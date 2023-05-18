@@ -35,7 +35,7 @@ function check_login() {
         post(obj, '/doLogin', res => {
             if (res.code === 0) {
                 layer.msg(res.data, {icon: 1, time: 1500}, function () {
-                    window.location.href = '/user/toPage';
+                    window.location.href = '/room/index';
                 })
             } else {
                 layer.msg(res.msg, {icon: 5, time: 1500});

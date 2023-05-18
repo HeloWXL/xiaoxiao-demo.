@@ -5,13 +5,19 @@ import lombok.Data;
 @Data
 public class MsgEntity {
     /**
-     * 系统消息类型 sys , simpleText
+     * 发送人
+     */
+    String sender;
+
+    /**
+     * 房间号
+     */
+    String roomId;
+
+    /**
+     * 系统消息类型 sys , text
      */
     String sysMsgType;
-    /**
-     * 消息类型  join leave ，text:
-     */
-    String msgType;
     /**
      * 消息体
      */
@@ -20,9 +26,8 @@ public class MsgEntity {
     public MsgEntity() {
     }
 
-    public MsgEntity(String sysMsgType, String msgType, Object data) {
+    public MsgEntity(String sysMsgType,  Object data) {
         this.sysMsgType = sysMsgType;
-        this.msgType = msgType;
         this.data = data;
     }
 }

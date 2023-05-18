@@ -2,6 +2,7 @@ package xx.chatroom.ws;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,8 +20,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-@ServerEndpoint(value = "/chat/${roomId}/{userId}", encoders = {EncoderUtil.class}, decoders = {DecoderUtil.class})
+@Slf4j
+@ServerEndpoint(value = "/chat/{roomId}/{userId}", encoders = {EncoderUtil.class}, decoders = {DecoderUtil.class})
 @Component
 public class WebSocketServer {
 
@@ -73,18 +74,23 @@ public class WebSocketServer {
         webSocketMap.put(userId, this);
         addOnlineCount();
         joinToRoom(userId, roomId);
-        logger.info("用户 【{}】已连接,当前在线人数为:【{}】", userId, getOnlineCount());
+        logger.info("房间号：[{}] ,用户 [{}] 已连接,当前在线人数为:[{}]", roomId, userId, getOnlineCount());
     }
 
     /**
      * 接收客户端发送的消息
      *
-     * @param message
+     * @param msgEntity
      */
     @OnMessage
-    public void onMessage(String message) {
-        logger.info("接收到客户端发送的消息：【{}】", message);
-        JSONObject jsonObject = JSON.parseObject(message);
+    public void onMessage(MsgEntity msgEntity) {
+        logger.info("接收到客户端发送的消息：【{}】", msgEntity.toString());
+        if ("text".equals(msgEntity.getSysMsgType())) {
+            msgEntity.setSender(userId);
+            msgEntity.setRoomId(roomId);
+            // 推送消息给房间所有人
+            oneToRoom(roomId, msgEntity);
+        }
     }
 
     /**
@@ -98,7 +104,7 @@ public class WebSocketServer {
         jsonObject.put("userId", userId);
         jsonObject.put("roomId", roomId);
         redisTemplate.opsForHash().put(ROOM_KEY + roomId, userId, jsonObject);
-        oneToRoom(roomId, new MsgEntity("sys", "join", userId + " join then room"));
+        oneToRoom(roomId, new MsgEntity("sys", userId + " join then room"));
     }
 
     /**
@@ -109,7 +115,9 @@ public class WebSocketServer {
     public void oneToRoom(String roomId, MsgEntity data) {
         Map<String, Object> res = getAllUserFromRoom(roomId);
         res.forEach((key, value) -> {
-            oneToOne(key, data);
+            if (!userId.equals(key)) {
+                oneToOne(key, data);
+            }
         });
     }
 
@@ -148,6 +156,20 @@ public class WebSocketServer {
     }
 
     /**
+     * 用户断开连接 离开房间
+     *
+     * @param roomId
+     * @param userId
+     */
+    public void leaveRoom(String roomId, String userId) {
+        redisTemplate.opsForHash().delete(ROOM_KEY + roomId, userId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userId", userId);
+        jsonObject.put("roomId", roomId);
+        oneToRoom(roomId, new MsgEntity("sys", userId + " leave then room"));
+    }
+
+    /**
      * @param session
      * @param error
      */
@@ -165,7 +187,9 @@ public class WebSocketServer {
             webSocketMap.remove(userId);
             //从set中删除
             subOnlineCount();
+            leaveRoom(roomId, userId);
         }
+        log.info("房间号：" + roomId + ",用户退出:" + userId + ",当前在线人数为:" + getOnlineCount());
     }
 
     /**

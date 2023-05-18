@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import xx.chatroom.common.ConstantUtil;
+import xx.chatroom.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,9 +41,9 @@ public class SystemInterceptor implements HandlerInterceptor {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
-        Object object = request.getSession().getAttribute(ConstantUtil.SESSION_KEY);
+        User user = (User)request.getSession().getAttribute(ConstantUtil.SESSION_KEY);
         //不存在的话，跳转到登录界面
-        if (object == null) {
+        if (user == null) {
             String defaultFailureUrl = "/login";
             log.info("被拦截地址-->" + request.getRequestURI());
             String path = request.getContextPath();
