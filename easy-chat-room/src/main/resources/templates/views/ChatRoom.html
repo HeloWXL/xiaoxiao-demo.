@@ -12,8 +12,8 @@
         <legend style="margin-left: 40%;">聊天室</legend>
     </fieldset>
     <div class="layui-row layui-col-space5">
-        <div class="layui-col-md4">
-            <blockquote class="layui-elem-quote">用户信息</blockquote>
+        <div class="layui-col-md3">
+            <blockquote class="layui-elem-quote">当前用户</blockquote>
             <form class="layui-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -23,20 +23,20 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">接收人Id</label>
+                        <label class="layui-form-label">用户名</label>
                         <div class="layui-input-inline">
-                            <input id="toUserId" autocomplete="off" class="layui-input">
+                            <input id="userName" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" onclick="SOCKET.start()" type="button">建立连接</button>
+                        <button class="layui-btn" onclick="SOCKET.join()" type="button">创建/加入房间</button>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="layui-col-md8">
+        <div class="layui-col-md6">
             <blockquote class="layui-elem-quote">接收信息区</blockquote>
             <fieldset class="layui-elem-field layui-field-title">
                 <legend>消息记录</legend>
@@ -45,6 +45,16 @@
                 <div id="msgDiv" class="scroller">
 
                 </div>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <blockquote class="layui-elem-quote">在线人数</blockquote>
+            <div class="online-people">
+
+            </div>
+            <blockquote class="layui-elem-quote">系统消息</blockquote>
+            <div class="sys-msg">
+
             </div>
         </div>
     </div>
@@ -67,6 +77,31 @@
 <script type="application/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
 <!--layui-->
 <script type="application/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+
+<div id="joinRoomDialog">
+    <form class="layui-form" id="userForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">当前用户ID:</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off"  class="layui-input" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">房间号:</label>
+            <div class="layui-input-block">
+                <input type="text" id="roomId"  autocomplete="off" placeholder="请输入房间号" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" onclick="user.saveUser()">立即提交</button>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="user.cancleDialog()">取消</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
 <script>
     var ws = null;
     var layer = null;
@@ -107,14 +142,14 @@
          * 开始建立连接
          * @returns {boolean}
          */
-        start: () => {
+        join: () => {
             if (typeof (WebSocket) == "undefined") {
                 layer.msg('您的浏览器不支持WebSocket', {icon: 5, time: 1500})
                 return false;
             }
-            var userId = $("#userId").val();
-            if (userId === '' || userId == null) {
-                layer.msg('请输入您的用户Id', {icon: 5, time: 1500})
+            var roomId = $("#roomId").val();
+            if (roomId === '' || roomId == null) {
+                layer.msg('请输入房间号', {icon: 5, time: 1500})
                 return false;
             }
             SOCKET.url = SOCKET.url.replace("https", "ws").replace("http", "ws");
@@ -213,6 +248,12 @@
             if(SOCKET.ws){
                 SOCKET.ws.close();
             }
+        },
+        /**
+         * 退出房间
+         */
+        exit:()=>{
+
         }
     }
 
