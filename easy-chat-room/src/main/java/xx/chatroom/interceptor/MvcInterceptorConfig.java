@@ -27,7 +27,6 @@ public class MvcInterceptorConfig implements WebMvcConfigurer {
                 //todo 不进行拦截的页面
                 "/error",
                 "/login",
-                "/room/index",
                 "/doRegister",
                 "/doLogin",
                 "/**/*.css",

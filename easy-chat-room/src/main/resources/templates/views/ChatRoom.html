@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>聊天室</title>
     <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/client.css}">
+    <style>
+        .layui-form-item .layui-input-inline {
+            width: 150px;
+        }
+    </style>
+    <script th:inline="javascript">
+        var user = [[${user}]]
+    </script>
 </head>
 <body>
 <div class="layui-container">
@@ -12,31 +20,32 @@
         <legend style="margin-left: 40%;">聊天室</legend>
     </fieldset>
     <div class="layui-row layui-col-space5">
-        <div class="layui-col-md4">
-            <blockquote class="layui-elem-quote">用户信息</blockquote>
+        <div class="layui-col-md3">
+            <blockquote class="layui-elem-quote">当前用户</blockquote>
             <form class="layui-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">用户Id</label>
                         <div class="layui-input-inline">
-                            <input id="userId" autocomplete="off" class="layui-input">
+                            <input autocomplete="off" class="layui-input" th:value="${{user.userId}}">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">接收人Id</label>
+                        <label class="layui-form-label">用户名</label>
                         <div class="layui-input-inline">
-                            <input id="toUserId" autocomplete="off" class="layui-input">
+                            <input autocomplete="off" class="layui-input" th:value="${{user.userName}}">
                         </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" onclick="SOCKET.start()" type="button">建立连接</button>
+                    <div class="layui-inline">
+                        <button class="layui-btn" onclick="openJoinDialog()" type="button">加入房间</button>
+                        <button class="layui-btn layui-btn-danger" onclick="SOCKET.exit()" type="button">退出房间</button>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="layui-col-md8">
+        <div class="layui-col-md6">
             <blockquote class="layui-elem-quote">接收信息区</blockquote>
             <fieldset class="layui-elem-field layui-field-title">
                 <legend>消息记录</legend>
@@ -45,6 +54,16 @@
                 <div id="msgDiv" class="scroller">
 
                 </div>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <blockquote class="layui-elem-quote">在线人数</blockquote>
+            <div class="online-people">
+
+            </div>
+            <blockquote class="layui-elem-quote">系统消息</blockquote>
+            <div class="sys-msg">
+
             </div>
         </div>
     </div>
@@ -67,9 +86,29 @@
 <script type="application/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
 <!--layui-->
 <script type="application/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<!--加入房间弹窗-->
+<div id="joinRoomDialog" style="display: none;padding: 15px">
+    <form class="layui-form" id="userForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">当前用户ID:</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" class="layui-input" disabled th:value="${{user.userId}}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">房间号:</label>
+            <div class="layui-input-block">
+                <input type="text" id="roomId" autocomplete="off" placeholder="请输入房间号" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+
+
 <script>
     var ws = null;
     var layer = null;
+    var roomId = null;
 
     $(function () {
         Layui.init();
@@ -79,7 +118,7 @@
         /**
          * 初始化layui
          */
-        init:()=>{
+        init: () => {
             layui.use(['layer'], function () {
                 layer = layui.layer;
             });
@@ -90,7 +129,6 @@
      * WebSocket 相关
      */
     var SOCKET = {
-
         /**
          * 存放消息div
          */
@@ -102,19 +140,19 @@
         /**
          * websocket 连接地址
          */
-        url: "" + window.location.protocol + "//" + window.location.host + "/chat/" ,
+        url: "" + window.location.protocol + "//" + window.location.host + "/chat/",
         /**
          * 开始建立连接
          * @returns {boolean}
          */
-        start: () => {
+        join: () => {
             if (typeof (WebSocket) == "undefined") {
                 layer.msg('您的浏览器不支持WebSocket', {icon: 5, time: 1500})
                 return false;
             }
-            var userId = $("#userId").val();
-            if (userId === '' || userId == null) {
-                layer.msg('请输入您的用户Id', {icon: 5, time: 1500})
+            roomId = $("#roomId").val();
+            if (roomId === '' || roomId == null) {
+                layer.msg('请输入房间号', {icon: 5, time: 1500})
                 return false;
             }
             SOCKET.url = SOCKET.url.replace("https", "ws").replace("http", "ws");
@@ -123,7 +161,7 @@
                 SOCKET.ws.close();
                 SOCKET.ws = null;
             }
-            SOCKET.ws = new WebSocket(SOCKET.url+userId);
+            SOCKET.ws = new WebSocket(SOCKET.url + roomId + '/' + user.userId);
             //打开事件
             SOCKET.ws.onopen = SOCKET.onOpen;
             //关闭事件
@@ -137,21 +175,30 @@
          * 成功建立
          */
         onOpen: () => {
-            layer.msg('已建立WebSocket连接', {icon: 1, time: 1500})
+            layer.msg('连接成功', {icon: 1, time: 1500})
         },
         /**
          * 接收服务端推送消息
          */
         onMessage: (msg) => {
             msg = JSON.parse(msg.data)
-            SOCKET.$msgDiv.append('' +
-                '<div class="other-msg-container">' +
-                '   <img class="left-img" src="/images/left.png">' +
-                '   <div class="other-msg msg-common">' +
-                '       <p class="user">用户名：' + msg.sender + '</p><p class="chat">' + msg.msg + '</p>' +
-                '   </div>' +
-                '</div>');
-            SOCKET.scroolBottom();
+            console.log(msg)
+            // 系统消息
+            if (msg.sysMsgType === 'sys') {
+                $('.sys-msg').append(
+                    '<div> ' + msg.data + ' </div>'
+                );
+            }
+            if (msg.sysMsgType === 'text') {
+                SOCKET.$msgDiv.append('' +
+                    '<div class="other-msg-container">' +
+                    '   <img class="left-img" src="../images/left.png">' +
+                    '   <div class="other-msg msg-common">' +
+                    '       <p class="user">用户名：' + msg.sender + '</p><p class="chat">' + msg.data + '</p>' +
+                    '   </div>' +
+                    '</div>');
+                SOCKET.scroolBottom();
+            }
         },
         /**
          * 连接发生错误
@@ -168,58 +215,83 @@
         /**
          * 发送消息
          */
-        sendMsg:()=>{
-
+        sendMsg: () => {
             var msg = $("#msg").val();
             if (msg === '' || msg == null) {
                 layer.msg('消息内容不能为空', {icon: 5, time: 1500});
                 return;
             }
-            var receiver = $("#toUserId").val();
-            if (receiver === '' || receiver == null) {
-                layer.msg('请输入接收人', {icon: 5, time: 1500});
-                return;
-            }
             var msgObj = {
-                "receiver": receiver,
-                "msg": msg
+                sender:user.userId,
+                roomId:roomId,
+                sysMsgType: 'text',
+                data: msg
             };
-            if(SOCKET.ws && SOCKET.ws.readyState === 1){
+            if (SOCKET.ws && SOCKET.ws.readyState === 1) {
                 SOCKET.ws.send(JSON.stringify(msgObj));
                 SOCKET.$msgDiv.append('' +
                     '<div class="my-msg-container">' +
                     '   <img class="right-img" src="/images/right.png">' +
                     '   <div class="my-msg msg-common">' +
-                    '       <p class="user">用户名：' + $("#userId").val() + '</p><p class="chat">' + msgObj.msg + '</p>' +
+                    '       <p class="user">用户名：' + user.userId + '</p><p class="chat">' + msg + '</p>' +
                     '   </div>' +
                     '</div>');
                 SOCKET.scroolBottom();
                 $("#msg").val('')
-            }else{
-                layer.msg('请检查连接是否正常？', {icon: 5,time: 1500});
+            } else {
+                layer.msg('请检查连接是否正常？', {icon: 5, time: 1500});
             }
         },
         /**
          * 滚动至底部
          */
-        scroolBottom:()=>{
+        scroolBottom: () => {
             var $div = document.getElementById("msgDiv");
             $div.scrollTop = $div.scrollHeight;
         },
         /**
          * 断开连接
          */
-        disConnect:()=>{
-            if(SOCKET.ws){
+        disConnect: () => {
+            if (SOCKET.ws) {
                 SOCKET.ws.close();
             }
+        },
+        /**
+         * 退出房间
+         */
+        exit: () => {
+            layer.confirm('确定是否退出房间？', {title: '提示'}, function (index) {
+                SOCKET.disConnect();
+            });
         }
     }
 
-    window.onbeforeunload  = function (){
+    window.onbeforeunload = function () {
         SOCKET.disConnect();
     }
 
+    /**
+     * 打开加入房间弹窗
+     */
+    function openJoinDialog() {
+        layer.open({
+            id: 'add',
+            type: 1,
+            title: ['加入房间'],
+            skin: 'layui-layer-molv',
+            area: '500px',
+            offset: 'auto',
+            content: $('#joinRoomDialog'),
+            btn: ['提交', '取消'],
+            yes: (index, layero) => {
+                SOCKET.join();
+                layer.close(index)
+            }, cancle: (index, layero) => {
+                layer.close(index);
+            }
+        })
+    }
 </script>
 </body>
 </html>

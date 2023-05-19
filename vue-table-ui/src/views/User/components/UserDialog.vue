@@ -88,6 +88,7 @@ export default {
       // 清空表单内容
       this.$nextTick(() => {
         this.$refs['userForm'].resetFields();
+        this.userForm = {}
       })
     }
   }
