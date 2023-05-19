@@ -1,13 +1,20 @@
 <template>
-  <quill-editor
-      class="ql-editor"
-      v-model="content"
-      ref="myQuillEditor"
-      :options="editorOption"
-      @blur="onEditorBlur($event)"
-      @focus="onEditorFocus($event)"
-      @change="onEditorChange($event)">
-  </quill-editor>
+  <div>
+    <quill-editor
+        class="ql-editor"
+        v-model="content"
+        ref="myQuillEditor"
+        :options="editorOption"
+        @blur="onEditorBlur($event)"
+        @focus="onEditorFocus($event)"
+        @change="onEditorChange($event)">
+    </quill-editor>
+    <el-row>
+      <el-button type="primary" @click="setValue">设置值</el-button>
+      <el-button type="success" @click="getValue">获取值</el-button>
+    </el-row>
+  </div>
+
 </template>
 
 <script>
@@ -24,7 +31,7 @@ export default {
   },
   data() {
     return {
-      content: `<p>这是 vue-quill-editor 的内容！</p>`, //双向数据绑定数据
+      content: null, //双向数据绑定数据
       // 富文本编辑器配置
       editorOption: {
         modules: {
@@ -66,6 +73,13 @@ export default {
     onEditorChange({quill, html, text}) {
       console.log('editor change!', quill, html, text)
       this.content = html
+    },
+    setValue(){
+      let value = `<p>这是 vue-quill-editor 的内容！</p>`;
+      this.content = value;
+    },
+    getValue(){
+      console.log(this.content)
     }
   }
 
