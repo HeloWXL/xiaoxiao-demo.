@@ -8,7 +8,7 @@ import {Message} from 'element-ui'
  */
 const ajax = axios.create({
     timeout: 50000,
-    baseURL:'http://localhost:8081'
+    baseURL:'http://localhost:8082'
 })
 
 

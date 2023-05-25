@@ -1,5 +1,5 @@
-
+import {get} from '@/util/axios'
 
 export function queryUserFile(params){
-    console.log(params)
+    return get('/uploadFile/selectAll',params)
 }

@@ -15,7 +15,7 @@
         <!--XLXS-->
         <div v-else-if="fileType === 'xlsx'" id="luckysheet" style="margin:0px;padding:0px;width:100%;height:100vh;"></div>
         <!--图片-->
-        <div v-else-if="fileType === 'png' || fileType === 'jpg' || fileType === 'gif' " ref="imgContainer"></div>
+        <img v-else-if="fileType === 'png' || fileType === 'jpg' || fileType === 'gif' " ref="imgContainer"/>
         <!--其他-->
         <el-empty v-else description="该格式文件暂不支持预览"></el-empty>
       </div>
@@ -67,10 +67,9 @@ export default {
       this.fileType = fileType;
       // 参数
       const params = {
-        path: this.fileInfo.filePath,
-        filename: this.fileInfo.fileName
+        fileId: this.fileInfo.id
       }
-      const url = '/upload/getFileByUrl';
+      const url = '/upload/previewFile';
       // word
       if (this.fileType === 'docx') {
         this.$ajax.get(url, {
@@ -85,7 +84,7 @@ export default {
           console.error(error)
         })
       }
-      // Excel 处理
+      // Excel
       else if (this.fileType === 'xlsx') {
         this.$ajax.get(url, {
           params: params,
@@ -103,6 +102,17 @@ export default {
               data: exportJson.sheets  //导入excel数据
             })
           })
+        }).catch(error => {
+          console.error(error)
+        })
+      }
+      else if(this.fileType === 'png' || this.fileType === 'jpg' || this.fileType === 'gif'){
+        this.$ajax.get(url, {
+          params: params,
+          responseType: 'blob'
+        }).then((res) => {
+            this.$refs.imgContainer.src = res;
+
         }).catch(error => {
           console.error(error)
         })

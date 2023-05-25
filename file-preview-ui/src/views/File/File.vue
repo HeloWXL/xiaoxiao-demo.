@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-row>
+    <el-row style="margin-top: 10px;margin-bottom: 10px">
       <el-col :span="24">
         <el-button type="primary">上传文件</el-button>
       </el-col>
@@ -17,6 +17,13 @@
             border
             style="width: 100%">
           <el-table-column
+              prop="id"
+              label="文件ID"
+              align="center"
+              show-overflow-tooltip
+          >
+          </el-table-column>
+          <el-table-column
               prop="fileName"
               label="文件名"
               align="center"
@@ -24,24 +31,37 @@
           >
           </el-table-column>
           <el-table-column
-              prop="status"
-              label="文件状态"
+              prop="fileSize"
+              label="文件大小"
               align="center"
-              :formatter="statusFormater"
           >
           </el-table-column>
           <el-table-column
-              prop="remark"
-              label="备注"
+              prop="filePath"
+              label="路径"
               show-overflow-tooltip
           >
           </el-table-column>
           <el-table-column
               prop="createTime"
-              label="创建时间"
+              label="上传时间"
               show-overflow-tooltip
               align="center"
           >
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button
+                  size="mini"
+                  type="primary"
+                  @click="downloadFile( scope.row)">下载
+              </el-button>
+              <el-button
+                  size="mini"
+                  type="success"
+                  @click="previewFile(scope.row)">预览
+              </el-button>
+            </template>
           </el-table-column>
         </el-table>
         <el-pagination
@@ -63,7 +83,7 @@
 </template>
 
 <script>
-import {queryFile} from "@/api/file/file";
+import {queryUserFile} from "@/api/file/file";
 
 import PreviewFileDialog from "@/views/File/components/PreviewFileDialog";
 import UploadDialog from "@/views/File/components/UploadDialog";
@@ -84,10 +104,13 @@ export default {
       loading: false,
     }
   },
+  created() {
+    this.queryFileList();
+  },
   methods: {
-    queryUserFile() {
+    queryFileList() {
       this.loading = true
-      queryFile({current: 1, size: 10}).then((res) => {
+      queryUserFile({current: this.currentPage, size: this.pageSize}).then((res) => {
         this.loading = false
         this.fileTableData = res.data.records
         this.total = res.data.total
@@ -97,13 +120,20 @@ export default {
     handleSizeChange(val) {
       this.pageSize = val;
       this.currentPage = 1;
-      this.queryUserFile();
+      this.queryFileList();
     },
     /** 当前改变 */
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.queryUserFile();
+      this.queryFileList();
     },
+    downloadFile() {
+
+    },
+    previewFile(row) {
+      this.$refs.previewFileDialog.fileInfo = row;
+      this.$refs.previewFileDialog.dialogVisible = true;
+    }
   }
 }
 </script>
