@@ -40,14 +40,28 @@ public class UploadController {
     }
 
     /**
+     * 在线预览
+     * @param fileId
+     * @param response
+     */
+    @GetMapping("/previewFile")
+    public void previewFile(String fileId, HttpServletResponse response) {
+        try {
+            uploadService.filePreview(fileId, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 下载文件
-     * @param path
+     * @param fileId
      * @param response
      */
     @GetMapping("/downloadFile")
-    public void uploadFile(String path, HttpServletResponse response) {
+    public void uploadFile(String fileId, HttpServletResponse response) {
         try {
-            uploadService.downloadFile(path, response);
+            uploadService.downloadFile(fileId, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
