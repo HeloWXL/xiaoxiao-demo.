@@ -99,6 +99,9 @@ body {
     -webkit-animation-duration: 1s;
     animation-duration: 1s;
 }
+.form .register-form {
+    display: none;
+}
 @-webkit-keyframes shake {
     from, to {
         -webkit-transform: translate3d(0, 0, 0);

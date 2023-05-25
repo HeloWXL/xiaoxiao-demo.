@@ -1,6 +1,7 @@
 package xx.login.controller;
 
 import com.baomidou.mybatisplus.extension.api.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import xx.login.entity.User;
@@ -9,6 +10,9 @@ import xx.login.service.UserService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import static xx.login.common.ConstantUtil.SESSION_KEY;
+
+@Slf4j
 @RestController
 @RequestMapping("/")
 public class LoginController {
@@ -50,14 +54,15 @@ public class LoginController {
      * @param request
      * @return
      */
-    @PostMapping("/logout")
-    public R userlogout(HttpServletRequest request){
-//        if(request==null){
-//            throw new BusinessException(ErrorCode.NOT_LOGIN,"该用户没有登录");
-//        }
-//        int result = userService.userLogout(request);
-//        return R.success(result);
-        return R.ok("");
+    @GetMapping("/logout")
+    public ModelAndView userlogout(HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute(SESSION_KEY);
+        //session失效
+        request.getSession().invalidate();
+        if (user != null) {
+            log.info(user.getUserName() + "安全退出");
+        }
+        return new ModelAndView("redirect:login");
     }
 
 }
