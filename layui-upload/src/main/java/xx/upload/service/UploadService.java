@@ -6,9 +6,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import xx.upload.dao.UploadFileDao;
+import xx.upload.entity.UploadFile;
 import xx.upload.util.FileUtil;
 import xx.upload.util.Result;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +23,9 @@ import java.util.Map;
 
 @Component
 public class UploadService {
+
+    @Resource
+    private UploadFileDao uploadFileDao;
 
     @Value("${file.path}")
     private String savePath;
@@ -37,6 +43,7 @@ public class UploadService {
         }else{
             // 获取文件名
             String fileName = file.getOriginalFilename();
+            Long fileSize = file.getSize();
             try {
                 Date date = new Date();
                 // 生成路径
@@ -52,9 +59,17 @@ public class UploadService {
                 String filePath = relativeDir + newName;
                 // 保存文件
                 file.transferTo(new File(savePath + filePath));
+
+                UploadFile uploadFile = new UploadFile();
+                uploadFile.setFileName(fileName);
+                uploadFile.setFileSize(fileSize);
+                uploadFile.setFilePath(filePath);
+                uploadFile.setCreateTime(new Date());
+                uploadFileDao.insert(uploadFile);
+
                 result.put("flag", true);
                 result.put("msg","上传成功");
-                result.put("data","http://localhost:9090/upload/getFileByUrl?path="+filePath);
+                result.put("data","http://localhost:8082/upload/previewFile?fileId="+uploadFile.getId());
             } catch (Exception e) {
                 e.printStackTrace();
                 result.put("flag", false);
@@ -65,22 +80,40 @@ public class UploadService {
     }
 
     /**
-     * 下载文件
-     * @param path
+     * 文件预览吗
+     * @param fileId
      * @param response
      * @throws Exception
      */
-    public void downloadFile(String path, HttpServletResponse response) throws Exception {
+    public void filePreview(String fileId, HttpServletResponse response) throws Exception {
         response.reset();
-        String fileName = "";
-        if (path.split("/").length > 0) {
-            fileName = path.split("/")[1];
-        } else {
+        UploadFile file = uploadFileDao.selectById(fileId);
+        if(file == null){
             return;
         }
-        FileInputStream inputStream = new FileInputStream(new File(savePath+path));
+        FileInputStream inputStream = new FileInputStream(new File(savePath+file.getFilePath()));
         // 在线打开方式 文件名应该编码成UTF-8
-        response.setHeader("Content-Disposition", "inline; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        response.setHeader("Content-Disposition", "inline; filename=" + URLEncoder.encode(file.getFileName(), "UTF-8"));
+        byte[] buffer = new byte[1024];
+        int len;
+        OutputStream outputStream = response.getOutputStream();
+        while ((len = inputStream.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, len);
+        }
+        outputStream.flush();
+        inputStream.close();
+    }
+
+
+    public void downloadFile(String fileId, HttpServletResponse response) throws Exception {
+        response.reset();
+        UploadFile file = uploadFileDao.selectById(fileId);
+        if(file == null){
+            return;
+        }
+        FileInputStream inputStream = new FileInputStream(new File(savePath+file.getFilePath()));
+        // 下载方式 文件名应该编码成UTF-8
+        response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(file.getFileName(), "UTF-8"));
         byte[] buffer = new byte[1024];
         int len;
         OutputStream outputStream = response.getOutputStream();

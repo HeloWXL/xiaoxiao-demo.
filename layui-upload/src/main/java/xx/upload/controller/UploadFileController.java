@@ -35,52 +35,8 @@ public class UploadFileController extends ApiController {
      * @param uploadFile 查询实体
      * @return 所有数据
      */
-    @GetMapping
+    @GetMapping("selectAll")
     public R selectAll(Page<UploadFile> page, UploadFile uploadFile) {
         return success(this.uploadFileService.page(page, new QueryWrapper<>(uploadFile)));
-    }
-
-    /**
-     * 通过主键查询单条数据
-     *
-     * @param id 主键
-     * @return 单条数据
-     */
-    @GetMapping("{id}")
-    public R selectOne(@PathVariable Serializable id) {
-        return success(this.uploadFileService.getById(id));
-    }
-
-    /**
-     * 新增数据
-     *
-     * @param uploadFile 实体对象
-     * @return 新增结果
-     */
-    @PostMapping
-    public R insert(@RequestBody UploadFile uploadFile) {
-        return success(this.uploadFileService.save(uploadFile));
-    }
-
-    /**
-     * 修改数据
-     *
-     * @param uploadFile 实体对象
-     * @return 修改结果
-     */
-    @PutMapping
-    public R update(@RequestBody UploadFile uploadFile) {
-        return success(this.uploadFileService.updateById(uploadFile));
-    }
-
-    /**
-     * 删除数据
-     *
-     * @param idList 主键结合
-     * @return 删除结果
-     */
-    @DeleteMapping
-    public R delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.uploadFileService.removeByIds(idList));
     }
 }
