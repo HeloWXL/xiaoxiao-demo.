@@ -2,7 +2,7 @@
   <div class="container">
     <el-row style="margin-top: 10px;margin-bottom: 10px">
       <el-col :span="24">
-        <el-button type="primary">上传文件</el-button>
+        <el-button type="primary" @click="openUploadDialog">上传文件</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import {queryUserFile} from "@/api/file/file";
+import {queryUserFile, downloadFile} from "@/api/file/file";
 
 import PreviewFileDialog from "@/views/File/components/PreviewFileDialog";
 import UploadDialog from "@/views/File/components/UploadDialog";
@@ -108,6 +108,9 @@ export default {
     this.queryFileList();
   },
   methods: {
+    /**
+     * 查询文件列表
+     */
     queryFileList() {
       this.loading = true
       queryUserFile({current: this.currentPage, size: this.pageSize}).then((res) => {
@@ -116,19 +119,48 @@ export default {
         this.total = res.data.total
       })
     },
-    /** 页数编码改变 */
+    /**
+     * 页数编码改变
+     * @param val
+     */
     handleSizeChange(val) {
       this.pageSize = val;
       this.currentPage = 1;
       this.queryFileList();
     },
-    /** 当前改变 */
+    /**
+     * 当前改变
+     * @param val
+     */
     handleCurrentChange(val) {
       this.currentPage = val;
       this.queryFileList();
     },
-    downloadFile() {
-
+    /**
+     * 打开上传文件弹窗
+     */
+    openUploadDialog(){
+      this.$refs.uploadDialog.dialogVisible = true;
+    },
+    /**
+     * 文件下载
+     * @param row
+     */
+    downloadFile(row) {
+      downloadFile({fileId: row.id}).then(res => {
+        let url = window.URL.createObjectURL(new Blob([res]));
+        let link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        //指定下载后的文件名，防跳转
+        link.setAttribute("download", row.fileName);
+        document.body.appendChild(link);
+        link.click();
+        //下载完成移除元素
+        document.body.removeChild(link);
+        // 释放内存
+        window.URL.revokeObjectURL(link.href)
+      })
     },
     previewFile(row) {
       this.$refs.previewFileDialog.fileInfo = row;

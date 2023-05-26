@@ -57,7 +57,7 @@ export default {
         "Content-Type": "mutipart/form-data"
       };
       this.$ajax.post(
-          "/upload/file",
+          "/upload/uploadFile",
           formData,
           {
             headers: header

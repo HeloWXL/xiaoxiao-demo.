@@ -8,7 +8,7 @@ import {Message} from 'element-ui'
  */
 const ajax = axios.create({
     timeout: 50000,
-    baseURL:'http://localhost:8082'
+    baseURL:"/api"
 })
 
 
@@ -23,6 +23,9 @@ ajax.interceptors.request.use((config) => {
  * 后端响应的信息
  */
 ajax.interceptors.response.use((res) => {
+    if( res.data instanceof Blob){
+        return res.data;
+    }
     if (res.data.code !== 0) {
         Message.error(res.data.msg);
         return false;
@@ -42,6 +45,16 @@ ajax.interceptors.response.use((res) => {
         Message.error("未知错误");
     }
 })
+
+export function download(url, params = {}) {
+    return new Promise((resolve, reject) => {
+        ajax.get(url, {params: params,responseType: "blob"},).then(response => {
+            resolve(response)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
 
 export function get(url, params = {}) {
     return new Promise((resolve, reject) => {

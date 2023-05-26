@@ -41,17 +41,6 @@ public class LeaveController extends ApiController {
     }
 
     /**
-     * 通过主键查询单条数据
-     *
-     * @param id 主键
-     * @return 单条数据
-     */
-    @GetMapping("{id}")
-    public R selectOne(@PathVariable Serializable id) {
-        return success(this.leaveService.getById(id));
-    }
-
-    /**
      * 新增数据
      *
      * @param leave 实体对象
