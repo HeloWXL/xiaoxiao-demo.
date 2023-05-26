@@ -1,9 +1,10 @@
 package xx.notice.controller;
 
 import com.baomidou.mybatisplus.extension.api.R;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import xx.login.entity.User;
-import xx.login.service.UserService;
+import xx.notice.entity.User;
+import xx.notice.service.UserService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
