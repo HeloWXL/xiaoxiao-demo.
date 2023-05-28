@@ -11,13 +11,14 @@
       <!--预览 显示-->
       <div id="preview-container">
         <!-- word 文档-->
-        <div v-if="fileType === 'docx'" ref="docxContainer"></div>
+        <div v-if="wordType.includes(fileType)" ref="docxContainer"></div>
         <!--XLXS-->
-        <div v-else-if="fileType === 'xlsx'" id="luckysheet"
+        <div v-else-if="excelType.includes(fileType)" id="luckysheet"
              style="margin:0px;padding:0px;width:100%;height:100vh;"></div>
         <!--图片-->
-        <img v-else-if="fileType === 'png' || fileType === 'jpg' || fileType === 'gif' " :src="imgSrc"
-             style="width: 50%;height: 50%"/>
+        <div v-else-if="imgType.includes(fileType)" style="text-align: center">
+          <img :src="imgSrc"/>
+        </div>
         <!--其他-->
         <el-empty v-else description="该格式文件暂不支持预览"></el-empty>
       </div>
@@ -74,9 +75,10 @@ export default {
       fileInfo: {},
       // 文件类型
       fileType: null,
-      imgType: ['bmp', 'jpg', 'jpeg', 'png', 'tif', 'gif', 'pcx', 'tga', 'exif', 'fpx', 'svg', 'psd', 'cdr', 'pcd', 'dxf', 'ufo', 'eps', 'ai', 'raw', 'WMF', 'webp', 'avif', 'apng'],
-      videoType: ['wmv', 'asf', 'asx', 'rm', 'rmvb', 'mp4', '3gp', 'mov', 'm4v', 'avi', 'dat', 'mkv', 'flv', 'vob'],
-      wordType: ['text', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'rar', 'zip', '7z', 'apz', 'ar', 'bz', 'car', 'dar', 'cpgz', 'f', 'ha', 'hbc', 'hbc2', 'hbe', 'hpk', 'hyp'],
+      // 图片类型
+      imgType: ['png', 'jpg', 'gif','PNG'],
+      wordType: ['docx'],
+      excelType: ['xlsx']
     };
   },
   methods: {
@@ -91,8 +93,9 @@ export default {
       const params = {
         fileId: this.fileInfo.id
       }
+      // URL地址
       const url = '/upload/previewFile';
-      // word
+      //判断文件名后缀， Word 文档
       if (this.fileType === 'docx') {
         this.$ajax.get(url, {
           params: params,
@@ -101,12 +104,13 @@ export default {
           let blob = new Blob([res], {
             type: 'application/pdf'
           })
+          // 渲染
           that.docxRender(blob)
         }).catch(error => {
           console.error(error)
         })
       }
-      // Excel
+      // 判断文件名后缀， Excel 文档
       else if (this.fileType === 'xlsx') {
         this.$ajax.get(url, {
           params: params,
@@ -127,7 +131,9 @@ export default {
         }).catch(error => {
           console.error(error)
         })
-      } else if (this.imgType.includes(this.fileType)) {
+      }
+      // 判断文件类型后缀
+      else if (this.imgType.includes(this.fileType)) {
         let type = fileTypeMap[this.fileType]
         previewFile(params).then(res => {
           // 图片类型的

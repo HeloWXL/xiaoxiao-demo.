@@ -76,7 +76,7 @@
       </el-col>
     </el-row>
     <!--文件上传-->
-    <upload-dialog ref="uploadDialog"></upload-dialog>
+    <upload-dialog ref="uploadDialog" @queryFileList="queryFileList"></upload-dialog>
     <!--文件预览-->
     <preview-file-dialog ref="previewFileDialog"></preview-file-dialog>
   </div>

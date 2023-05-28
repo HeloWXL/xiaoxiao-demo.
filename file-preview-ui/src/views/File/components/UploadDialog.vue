@@ -9,13 +9,15 @@
     <el-upload
         class="uploadFile"
         ref="fileUpload"
+        drag
         action="#"
         :auto-upload="false"
         :http-request="uploadSectionFile"
         :file-list="fileList"
         :on-change="handleChange"
-    >
-      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        >
+      <i class="el-icon-upload"></i>
+      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
     </el-upload>
     <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
@@ -51,8 +53,7 @@ export default {
       }
       const formData = new FormData();
       formData.append("file", params.file);
-      formData.append("gradeId", this.gradeId);
-      formData.append("materialTypeId", this.materialTypeId);
+      // 设置contentType 信息
       const header = {
         "Content-Type": "mutipart/form-data"
       };
@@ -63,13 +64,17 @@ export default {
             headers: header
           }
       ).then((res) => {
+        // 判断上传返回结果
         if(res.flag === true){
           this.$message({
             type: 'success',
             message: res.msg
           });
-          this.queryRelationFile()
+          // 更新文件列表数据
+          this.$emit('queryFileList')
+          // 清除文件
           this.clearFile();
+          // 关闭弹窗
           this.dialogVisible = false;
         }else{
           this.$message({
@@ -98,15 +103,13 @@ export default {
      */
     clearFile(){
       this.$refs.fileUpload.clearFiles()
-    },
-    // 更新页面数据
-    queryRelationFile(){
-      this.$emit('queryRelationFile')
     }
   }
 }
 </script>
 
 <style scoped>
-
+.uploadFile{
+  text-align: center;
+}
 </style>

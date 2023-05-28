@@ -26,7 +26,7 @@ ajax.interceptors.response.use((res) => {
     if( res.data instanceof Blob){
         return res.data;
     }
-    if (res.data.code !== 0) {
+    if (res.data.flag === false) {
         Message.error(res.data.msg);
         return false;
     }
