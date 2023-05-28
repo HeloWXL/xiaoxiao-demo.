@@ -15,7 +15,7 @@ public class MsgEntity {
     String roomId;
 
     /**
-     * 系统消息类型 sys , text
+     * 系统消息类型 sys , text , roomList
      */
     String sysMsgType;
     /**

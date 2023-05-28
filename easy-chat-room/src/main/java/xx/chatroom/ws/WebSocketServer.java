@@ -17,6 +17,8 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -91,6 +93,12 @@ public class WebSocketServer {
             // 推送消息给房间所有人
             oneToRoom(roomId, msgEntity);
         }
+        // 获取房间人列表
+        if ("roomList".equals(msgEntity.getSysMsgType())) {
+            msgEntity.setSysMsgType("roomList");
+            msgEntity.setData(getRoomUserList(roomId));
+            oneToOne(userId, msgEntity);
+        }
     }
 
     /**
@@ -120,6 +128,21 @@ public class WebSocketServer {
             }
         });
     }
+
+    /**
+     * 获取房间人数列表
+     * @param roomId
+     * @return
+     */
+    public List<Object> getRoomUserList(String roomId){
+        List<Object> list = new ArrayList<>();
+        Map<String, Object> res = getAllUserFromRoom(roomId);
+        res.forEach((key, value) -> {
+            list.add(value);
+        });
+        return list;
+    }
+
 
     /**
      * 根据房间号获取人员信息
