@@ -112,7 +112,7 @@ public class WebSocketServer {
         jsonObject.put("userId", userId);
         jsonObject.put("roomId", roomId);
         redisTemplate.opsForHash().put(ROOM_KEY + roomId, userId, jsonObject);
-        oneToRoom(roomId, new MsgEntity("sys", userId + " join then room"));
+        oneToRoom(roomId, new MsgEntity("join", userId));
     }
 
     /**
@@ -131,10 +131,11 @@ public class WebSocketServer {
 
     /**
      * 获取房间人数列表
+     *
      * @param roomId
      * @return
      */
-    public List<Object> getRoomUserList(String roomId){
+    public List<Object> getRoomUserList(String roomId) {
         List<Object> list = new ArrayList<>();
         Map<String, Object> res = getAllUserFromRoom(roomId);
         res.forEach((key, value) -> {
@@ -189,7 +190,7 @@ public class WebSocketServer {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userId", userId);
         jsonObject.put("roomId", roomId);
-        oneToRoom(roomId, new MsgEntity("sys", userId + " leave then room"));
+        oneToRoom(roomId, new MsgEntity("leave", userId));
     }
 
     /**
