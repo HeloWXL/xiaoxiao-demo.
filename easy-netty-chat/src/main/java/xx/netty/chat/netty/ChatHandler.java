@@ -60,13 +60,14 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
             JSONObject jsonObject = JSON.parseObject(content);
             // 获取接收人
             String receiver = jsonObject.getString("receiver");
-            sendMsg(receiver, content);
+//            sendMsg(receiver, content);
+            sendAllMsg( content);
         }
         super.channelRead(ctx, msg);
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) {
 
     }
 
@@ -86,9 +87,7 @@ public class ChatHandler extends SimpleChannelInboundHandler<TextWebSocketFrame>
      * 群发消息
      */
     public void sendAllMsg(String content) {
-        for (Channel channel : clients) {
-            channel.writeAndFlush(new TextWebSocketFrame("[服务器接收到了客户端的消息:]" + LocalDateTime.now() + ",消息为:" + content));
-        }
+        clients.writeAndFlush(new TextWebSocketFrame("[服务器接收到了客户端的消息:]" + LocalDateTime.now() + ",消息为:" + content));
     }
 
     /**

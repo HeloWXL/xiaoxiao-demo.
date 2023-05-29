@@ -2,7 +2,7 @@ package xx.notice.service;
 
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.IService;
-import xx.login.entity.User;
+import xx.notice.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

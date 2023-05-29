@@ -9,6 +9,20 @@
         .layui-form-item .layui-input-inline {
             width: 150px;
         }
+        .online-people div{
+            height: 20px;
+            line-height: 20px;
+            background-color: #FFB800;
+            padding: 5px;
+            margin: 5px;
+        }
+        .sys-msg div{
+            height: 20px;
+            line-height: 20px;
+            background-color: #D0D0D0;
+            padding: 5px;
+            margin: 5px;
+        }
     </style>
     <script th:inline="javascript">
         var user = [[${user}]]
@@ -175,20 +189,46 @@
          * 成功建立
          */
         onOpen: () => {
-            layer.msg('连接成功', {icon: 1, time: 1500})
+            layer.msg('连接成功', {icon: 1, time: 1500}, () => {
+                // 获取 房间所有人
+                setTimeout(() => {
+                    SOCKET.getRoomList()
+                }, 1000);
+            });
+
         },
         /**
          * 接收服务端推送消息
          */
         onMessage: (msg) => {
             msg = JSON.parse(msg.data)
-            console.log(msg)
             // 系统消息
-            if (msg.sysMsgType === 'sys') {
+            if (msg.sysMsgType === 'join') {
                 $('.sys-msg').append(
-                    '<div> ' + msg.data + ' </div>'
+                    '<div> ' + msg.data + ' 加入了房间</div>'
                 );
+                if($(msg.data).length === 0){
+                    $('.online-people').append(
+                        '<div id="'+msg.data+'"> 用户名：' + msg.data + ' </div>'
+                    );
+                }
             }
+            if (msg.sysMsgType === 'leave') {
+                $('.sys-msg').append(
+                    '<div> ' + msg.data + ' 离开了房间 </div>'
+                );
+                $('#'+msg.data).remove();
+            }
+            // 房间信息
+            if (msg.sysMsgType === 'roomList') {
+                $('.online-people').empty();
+                msg.data.forEach(item => {
+                    $('.online-people').append(
+                        '<div id="'+item.userId+'"> 用户名：' + item.userId + ' </div>'
+                    );
+                })
+            }
+            //  普通文本信息
             if (msg.sysMsgType === 'text') {
                 SOCKET.$msgDiv.append('' +
                     '<div class="other-msg-container">' +
@@ -222,8 +262,8 @@
                 return;
             }
             var msgObj = {
-                sender:user.userId,
-                roomId:roomId,
+                sender: user.userId,
+                roomId: roomId,
                 sysMsgType: 'text',
                 data: msg
             };
@@ -263,7 +303,25 @@
         exit: () => {
             layer.confirm('确定是否退出房间？', {title: '提示'}, function (index) {
                 SOCKET.disConnect();
+                $('.sys-msg').empty();
+                $('.online-people').empty();
+                $('#msgDiv').empty();
             });
+        },
+        /**
+         * 获取房间人列表
+         */
+        getRoomList() {
+            var msgObj = {
+                sysMsgType: 'roomList',
+                sender: user.userId,
+                roomId: roomId
+            }
+            if (SOCKET.ws && SOCKET.ws.readyState === 1) {
+                SOCKET.ws.send(JSON.stringify(msgObj));
+            } else {
+                layer.msg('请检查连接是否正常？', {icon: 5, time: 1500});
+            }
         }
     }
 

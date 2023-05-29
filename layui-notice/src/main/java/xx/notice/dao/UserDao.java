@@ -2,7 +2,7 @@ package xx.notice.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import xx.login.entity.User;
+import xx.notice.entity.User;
 
 /**
  * (User)表数据库访问层

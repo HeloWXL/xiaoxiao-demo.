@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import xx.upload.entity.UploadFile;
 import xx.upload.service.UploadFileService;
 import org.springframework.web.bind.annotation.*;
+import xx.upload.util.Result;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("uploadFile")
-public class UploadFileController extends ApiController {
+public class UploadFileController {
     /**
      * 服务对象
      */
@@ -36,7 +37,7 @@ public class UploadFileController extends ApiController {
      * @return 所有数据
      */
     @GetMapping("selectAll")
-    public R selectAll(Page<UploadFile> page, UploadFile uploadFile) {
-        return success(this.uploadFileService.page(page, new QueryWrapper<>(uploadFile)));
+    public Result selectAll(Page<UploadFile> page, UploadFile uploadFile) {
+        return Result.success(this.uploadFileService.page(page, new QueryWrapper<>(uploadFile)));
     }
 }

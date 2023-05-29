@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import xx.login.common.ConstantUtil;
-import xx.login.dao.UserDao;
-import xx.login.entity.User;
-import xx.login.service.UserService;
+import xx.notice.common.ConstantUtil;
+import xx.notice.dao.UserDao;
+import xx.notice.entity.User;
+import xx.notice.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

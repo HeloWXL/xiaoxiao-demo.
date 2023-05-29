@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import xx.login.entity.User;
-import xx.login.service.UserService;
+import xx.notice.entity.User;
+import xx.notice.service.UserService;
+
 
 import javax.annotation.Resource;
 import java.util.List;

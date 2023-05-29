@@ -11,11 +11,14 @@
       <!--预览 显示-->
       <div id="preview-container">
         <!-- word 文档-->
-        <div v-if="fileType === 'docx'" ref="docxContainer"></div>
+        <div v-if="wordType.includes(fileType)" ref="docxContainer"></div>
         <!--XLXS-->
-        <div v-else-if="fileType === 'xlsx'" id="luckysheet" style="margin:0px;padding:0px;width:100%;height:100vh;"></div>
+        <div v-else-if="excelType.includes(fileType)" id="luckysheet"
+             style="margin:0px;padding:0px;width:100%;height:100vh;"></div>
         <!--图片-->
-        <img v-else-if="fileType === 'png' || fileType === 'jpg' || fileType === 'gif' " ref="imgContainer"/>
+        <div v-else-if="imgType.includes(fileType)" style="text-align: center">
+          <img :src="imgSrc"/>
+        </div>
         <!--其他-->
         <el-empty v-else description="该格式文件暂不支持预览"></el-empty>
       </div>
@@ -26,11 +29,28 @@
 <script>
 import {renderAsync} from "docx-preview";
 import LuckyExcel from "luckyexcel";
+import {previewFile} from "@/api/file/file";
+// 定义blob对应的type
+const fileTypeMap = {
+  "xls": "application/vnd.ms-excel",
+  "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "doc": "application/msword",
+  "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "pdf": "application/pdf",
+  "ppt": "application/pdf",
+  "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "png": "image/png",
+  "gif": "image/gif",
+  "jpeg": "image/jpeg",
+  "jpg": "image/jpeg",
+  "txt": "text/plain",
+}
 export default {
   name: "PreviewFileDialog",
   data() {
     return {
       dialogVisible: false,
+      imgSrc: null,
       /**
        * docx 预览参数配置
        */
@@ -55,9 +75,13 @@ export default {
       fileInfo: {},
       // 文件类型
       fileType: null,
+      // 图片类型
+      imgType: ['png', 'jpg', 'gif','PNG'],
+      wordType: ['docx'],
+      excelType: ['xlsx']
     };
   },
-  methods:{
+  methods: {
     openCallBack() {
       var that = this;
       const addTypeArray = this.fileInfo.filePath.split(".");
@@ -69,28 +93,30 @@ export default {
       const params = {
         fileId: this.fileInfo.id
       }
+      // URL地址
       const url = '/upload/previewFile';
-      // word
+      //判断文件名后缀， Word 文档
       if (this.fileType === 'docx') {
         this.$ajax.get(url, {
           params: params,
           responseType: 'blob'
         }).then((res) => {
-          let blob = new Blob([res.data], {
+          let blob = new Blob([res], {
             type: 'application/pdf'
           })
+          // 渲染
           that.docxRender(blob)
         }).catch(error => {
           console.error(error)
         })
       }
-      // Excel
+      // 判断文件名后缀， Excel 文档
       else if (this.fileType === 'xlsx') {
         this.$ajax.get(url, {
           params: params,
           responseType: 'blob'
         }).then((res) => {
-          const files = new window.File([res.data], this.fileInfo.fileName, {type: "application/vnd.ms-excel;charset=utf-8"});
+          const files = new window.File([res], this.fileInfo.fileName, {type: "application/vnd.ms-excel;charset=utf-8"});
           LuckyExcel.transformExcelToLucky(files, exportJson => {
             // eslint-disable-next-line
             luckysheet.destroy()
@@ -106,15 +132,13 @@ export default {
           console.error(error)
         })
       }
-      else if(this.fileType === 'png' || this.fileType === 'jpg' || this.fileType === 'gif'){
-        this.$ajax.get(url, {
-          params: params,
-          responseType: 'blob'
-        }).then((res) => {
-            this.$refs.imgContainer.src = res;
-
-        }).catch(error => {
-          console.error(error)
+      // 判断文件类型后缀
+      else if (this.imgType.includes(this.fileType)) {
+        let type = fileTypeMap[this.fileType]
+        previewFile(params).then(res => {
+          // 图片类型的
+          const blob = new Blob([res], {type})
+          this.imgSrc = window.URL.createObjectURL(blob)
         })
       }
     },
@@ -136,7 +160,7 @@ export default {
     closeForBack() {
       this.fileType = null;
       this.fileInfo = {}
-    }
+    },
   }
 }
 </script>
