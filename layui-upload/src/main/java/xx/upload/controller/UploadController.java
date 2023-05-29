@@ -5,8 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import xx.upload.entity.Result;
 import xx.upload.service.UploadService;
-import xx.upload.util.Result;
+
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +35,7 @@ public class UploadController {
      * @return
      */
     @PostMapping("/uploadFile")
-    public Result uploadFile(@RequestParam("file") MultipartFile file,@RequestParam(value = "params",required = false,defaultValue = "") String params) {
+    public Result uploadFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "params",required = false,defaultValue = "") String params) {
         logger.info("携带参数为：[{}]",params);
         return uploadService.uploadFile(file);
     }

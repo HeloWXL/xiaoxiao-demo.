@@ -8,7 +8,7 @@ server:
 spring:
   # 数据源配置
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/halo?useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://127.0.0.1:3306/demo?useUnicode=true&characterEncoding=UTF-8
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
@@ -26,8 +26,12 @@ spring:
     #配置模板路径，默认是templates，可以不用配置
     prefix: classpath:/templates/views/
     suffix: .html
-
+  #文件上传限制
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 # 文件存储位置
 file:
-  path: F:/tmp/
+  path: D:/tmp/

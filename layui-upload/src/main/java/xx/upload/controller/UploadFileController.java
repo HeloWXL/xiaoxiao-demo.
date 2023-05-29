@@ -2,17 +2,13 @@ package xx.upload.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.ApiController;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import xx.upload.entity.Result;
 import xx.upload.entity.UploadFile;
 import xx.upload.service.UploadFileService;
 import org.springframework.web.bind.annotation.*;
-import xx.upload.util.Result;
 
 import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * (UploadFile)表控制层
@@ -38,6 +34,6 @@ public class UploadFileController {
      */
     @GetMapping("selectAll")
     public Result selectAll(Page<UploadFile> page, UploadFile uploadFile) {
-        return Result.success(this.uploadFileService.page(page, new QueryWrapper<>(uploadFile)));
+        return Result.success("success",this.uploadFileService.page(page, new QueryWrapper<>(uploadFile)));
     }
 }

@@ -1,8 +1,9 @@
 package xx.upload.dao;
 
-import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import xx.upload.entity.UploadFile;
+
 
 /**
  * (UploadFile)表数据库访问层

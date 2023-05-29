@@ -3,13 +3,12 @@ package xx.upload.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import xx.upload.dao.UploadFileDao;
+import xx.upload.entity.Result;
 import xx.upload.entity.UploadFile;
 import xx.upload.util.FileUtil;
-import xx.upload.util.Result;
+
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
