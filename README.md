@@ -13,13 +13,13 @@
 | easy-editor-ui        | 编辑器<Vue>              | 否     | 待发布                                                                 |
 | easy-email            | QQ邮件发送                | 是     | 待发布                                                                 |
 | excel-import-export   | Excel导入导出             | 是     | [excel-import-export](https://www.bilibili.com/video/BV1r24y1T73f/) |
-| file-preview-ui       | 文件预览                  | 否     | 待发布                                                                 |
+| file-preview-ui       | 上传、下载、预览文件            | 是     | 待发布                                                                 |
 | layui-table           | 基于layui table 表格 增删改查 | 否     | 待发布                                                                 |
-| layui-upload          | 基于layui的文件上传          | 是     | 待发布                                                                 |
+| layui-upload          | 基于layui的上传、下载文件       | 是     | 待发布                                                                 |
 | vue-table-ui          | 表格增删改查<Vue>           | 是     | [vue-table-ui]()                                                                |
 | video-call            | 网页视频通话                | 是     | [video-call](https://www.bilibili.com/video/BV1vP41117pu/)          |
 | layui-leave-comments  | 留言                    | 否     | 待发布                                                                 |
-| layui-notice          | 通知、公告                 | 否     | 待发布                                                                 |
+| layui-notice          | 公告（个人、所有人、定时、登录通知）    | 否     | 待发布                                                                 |
 | layui-scan-code-login | 扫码登录                  | 否     | 待发布                                                                 |
 
 
