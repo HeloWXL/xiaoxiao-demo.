@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Big File Upload Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
+</head>
+<body>
+<!-- 模块名 -->
+<div class="layui-main" style="width: 100%;">
+    <div class="layui-row layui-col-space15" style="margin: 10px">
+        <div class="layui-col-md6" style="border: 1px solid #cccccc">
+            <div class="layui-panel">
+                <div style="padding: 50px 30px;">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>选完文件后不自动上传</legend>
+                    </fieldset>
+                    <div class="layui-btn-container">
+                        <input type="file" placeholder="请选择文件" class="layui-input" id="fileInput">
+                        <button type="button" class="layui-btn" onclick="Layui.upload()">开始上传</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<!--引入js文件-->
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+<script>
+    var element = null;
+    var layer = null;
+    var table = null;
+
+    $(() => {
+        Layui.initLayui();
+    })
+
+    var Layui = {
+        initLayui: () => {
+            layui.use(['layer', 'element', 'table'], function () {
+                element = layui.element;
+                layer = layui.layer;
+                table = layui.table
+            })
+        },
+        /**
+         * 上传
+         */
+        upload: () => {
+            var fileInput = document.getElementById('fileInput');
+            var fileName = document.getElementById("fileInput").files[0].name;
+            var files = fileInput.files;
+            // 每个块的大小为10KB
+            var chunkSize = 1024 * 1000;
+            var totalChunks = Math.ceil(files[0].size / chunkSize); // 文件总块数
+            var currentChunk = 0; // 当前块数
+
+            // 分片上传文件
+            function uploadChunk() {
+                var formData = new FormData();
+                // 将当前块数和总块数添加到formData中
+                formData.append('currentChunk', currentChunk);
+                formData.append('totalChunks', totalChunks);
+                formData.append('fileName', fileName);
+
+                // 计算当前块在文件中的偏移量和长度
+                var start = currentChunk * chunkSize;
+                var end = Math.min(files[0].size, start + chunkSize);
+                var chunk = files[0].slice(start, end);
+
+                // 添加当前块到formData中
+                formData.append('chunk', chunk);
+
+                // 将分片发送到后端
+                $.ajax({
+                    url: '/upload/upload',
+                    data: formData,
+                    method: 'post',
+                    dataType: 'text',
+                    contentType : false,
+                    processData : false,
+                    success: res => {
+                        // 更新当前块数
+                        currentChunk++;
+                        // 如果还有未上传的块，则继续上传
+                        if (currentChunk < totalChunks) {
+                            console.log(currentChunk)
+                            uploadChunk();
+                        } else {
+                            // 所有块都上传完毕，进行文件合并
+                            mergeChunks(fileName);
+                        }
+                    },
+                    error: e => {
+                        console.error('上传文件出错了',e)
+                    }
+                });
+            }
+
+            // 合并所有分片
+            function mergeChunks(fileName) {
+                $.ajax({
+                    url: '/upload/merge',
+                    data: {fileName: fileName},
+                    dataType: 'json',
+                    method: 'post',
+                    success: res => {
+                        console.log(res)
+                    },
+                    error: e => {
+                        console.error(e)
+                    }
+                })
+            }
+
+            // 开始上传
+            uploadChunk();
+        }
+    }
+</script>
+</html>

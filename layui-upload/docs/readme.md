@@ -1,8 +1,23 @@
-# Layui 文件上传
+# SpringBoot+Layui 文件上传与下载
+
+> 环境
+
+SpringBoot: 2.1.1.RELEASE
+
+jdk: 8
+
+Layui： v2.5.5
+
+# 首页图
+如下所示：
+![](img/img.png)
+
 
 ## 文件上传
 
-如果不是图片的文件上传，可不展示上传后的图片和预览的图片
+多种不同方式的文件上传，如：普通的图片上传、拖拽上传、选择完文件后在上传、原始文件上传等方式。
+
+注：如果不是图片的文件上传，可不展示上传后的图片和预览的图片
 
 ### 普通图片上传
 
@@ -102,10 +117,19 @@ response.setHeader("content-disposition",inline+";fileName="+fileName);
 
 ```
 
+## 文件下载与预览
+
+对于浏览器打开 不支持的个是预览时，会以下载的形式再打开。
+
 > 在线预览
 
-
+![](img/img_1.png)
 
 > 下载
 
+![](img/img_2.png)
 
+
+> demo 下载
+
+[下载地址](https://download.csdn.net/download/Java_Wxlin/87448216?spm=1001.2014.3001.5503)
