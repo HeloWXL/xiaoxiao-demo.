@@ -1,10 +1,9 @@
-package xx.notice;
+package xx.file;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LayuiNoticeApplicationTests {
-
+class LayuiUploadBigFileApplicationTests {
 
     void contextLoads() {
     }
