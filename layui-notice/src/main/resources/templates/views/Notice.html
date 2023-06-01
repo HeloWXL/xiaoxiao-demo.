@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>通知管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
+</head>
+<body>
+<!-- 模块名 -->
+<div class="layui-container" style="width: 100%;">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <!-- 模块名 -->
+            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">通知管理</blockquote>
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">发布通知</li>
+                    <li>已发送通知</li>
+                    <li>已接收通知</li>
+                </ul>
+                <div class="layui-tab-content" style="height: 100px;">
+                    <div class="layui-tab-item layui-show">
+                        <form class="layui-form" action="#">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">通知主题：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="noticeTopic"  autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">通知类型：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="radio" name="noticeType" value="1" title="即时通知" checked="">
+                                        <input type="radio" name="noticeType" value="2" title="登录时通知">
+                                        <input type="radio" name="noticeType" value="3" title="定时通知">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">接收对象：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="radio" name="receiveObj" value="1" title="全部" checked="">
+                                        <input type="radio" name="receiveObj" value="2" title="个人">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">通知内容:</label>
+                                    <div class="layui-input-inline">
+                                        <textarea class="layui-textarea" name="content" lay-verify="content" rows="4" style="width:400px"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="noticeForm">发布</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="layui-tab-item">
+
+                    </div>
+                    <div class="layui-tab-item">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!--引入js文件-->
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/util/httpUtil.js}"></script>
+<script>
+
+    var form = null;
+    var element = null;
+
+    layui.use(['form'], function(){
+        form = layui.form;
+        element = layui.element;
+
+        form.on('submit(noticeForm)', function(data){
+            console.log(data.field)
+            return false;
+        });
+
+    })
+
+
+</script>
+</html>
