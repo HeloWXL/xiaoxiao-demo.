@@ -1,6 +1,4 @@
 
-
-
 # 服务端口配置
 server:
   port: 8076
@@ -17,7 +15,7 @@ spring:
     database: 5
     host: localhost
     port: 6379
-    password: 123456
+    #password: 123456
     timeout: 6000ms
     jedis:
       pool:
