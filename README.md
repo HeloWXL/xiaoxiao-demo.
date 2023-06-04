@@ -1,6 +1,6 @@
 > 总览图
 
-![img.png](img.png)
+![img.png](./img.png)
 
 # 合集
 
