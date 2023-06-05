@@ -1,21 +1,26 @@
 import Vue from 'vue'
-import Chat from '@/views/chat/Chat'
+import VueRouter from 'vue-router'
 
-import VueRouter from "vue-router";
+import Index from '@/views/chat'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routes = [
     {
-        path: '/',
-        name: 'Chat',
-        component: Chat
+        path: "/",
+        name: 'Index',
+        component: Index
     }
-];
-
+]
 const router = new VueRouter({
+    mode: 'history',
     routes
-});
+})
 
 export default router
+
+
+
+
+
 

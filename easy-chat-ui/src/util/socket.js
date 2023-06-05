@@ -134,9 +134,7 @@ var socket = {
      */
     close: () => {
         console.log('主动断开连接')
-        if(socket.websocket){
-            socket.websocket.close()
-        }
+        socket.websocket.close()
     },
     /**
      * 成功连接回调
