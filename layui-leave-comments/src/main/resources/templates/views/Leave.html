@@ -6,45 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
-    <style>
-        .layui-layer-molv .layui-layer-title{
-            background: #1E9FFF;
-        }
-         .layui-input-block{
-            margin-left: 0px;
-        }
-        .leave-list{
-            background-color: #1E9FFF;
-            font-size: 20px;
-        }
-
-        .leave-list li{
-            margin: 25px;
-            height: 100%;
-        }
-
-        .user-name{
-            line-height: 30px;
-            height: 30px;
-            font-weight: bold;
-            color: #FFB800;
-        }
-
-        .leavetime{
-            line-height: 20px;
-            margin-top: 5px;
-            height: 20px;
-            font-size: 14px;
-            color: gray;
-        }
-
-        .question{
-            color: white;
-            padding: 10px;
-        }
-
-
-    </style>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/leave.css}"/>
 </head>
 <body>
 <!-- 模块名 -->
@@ -54,15 +16,17 @@
             <!-- 模块名 -->
             <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">留言</blockquote>
             <div class="top">
-                <form class="layui-form">
+                <form class="layui-form" action="#">
                     <div class="layui-form-item layui-form-text" id="leave-container">
                         <div class="layui-input-block">
-                            <textarea placeholder="请输入留言内容" class="layui-textarea"></textarea>
+                            <textarea placeholder="请输入留言内容" class="layui-textarea" required name="content"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                            <button type="button" class="layui-btn layui-btn-normal" id="leaveBtn">发布</button>
+                            <button type="button" class="layui-btn layui-btn-normal" lay-filter="leaveForm" lay-submit>
+                                发布
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -72,14 +36,19 @@
                 <ul>
                     <li>
                         <div class="user-name">
-                            <i class="layui-icon layui-icon-username"></i> halo
+                            <span>
+                                 <i class="layui-icon layui-icon-username"></i> halo
+                            </span>
+                            <div class="leavetime" style="float: right">
+                                <i class="layui-icon layui-icon-time"></i>
+                                2023-05-19 12:22:21
+                            </div>
                         </div>
                         <div class="question">
                             pom里面加上这个配置， 这个意思大概就是忽略 yml文件中的中文注释
                         </div>
-                        <div class="leavetime">
-                            <i class="layui-icon layui-icon-time"></i>
-                            2023-05-19 12:22:21
+                        <div class="reply">
+                            <a style="color: #1E9FFF;cursor: pointer;font-size: 14px">回复</a>
                         </div>
                     </li>
 
@@ -95,7 +64,6 @@
                         </div>
                     </li>
 
-
                     <li>
                         <div class="user-name">
                             halo
@@ -107,8 +75,6 @@
                             2023-05-19 12:22:21
                         </div>
                     </li>
-
-
                 </ul>
             </div>
         </div>
@@ -121,6 +87,76 @@
 <script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
 <script type="text/javascript" th:src="@{/javascript/util/httpUtil.js}"></script>
 <script>
+    var form = null;
+    var element = null;
 
+    $(() => {
+        loadLeaveData()
+
+        layui.use(['form'], function () {
+            form = layui.form;
+            element = layui.element;
+            form.on('submit(leaveForm)', function (data) {
+                saveLeaveForm(data.field)
+                return false;
+            });
+        })
+    })
+
+    /**
+     * 将数据提交至后台
+     * @param obj
+     */
+    function saveLeaveForm(obj) {
+        jsonPost(obj, '/leave/insert', res => {
+            if (res.data == true) {
+                layer.msg("提交成功", {icon: 1, time: 1500}, () => {
+                    loadLeaveData()
+                })
+            } else {
+                layer.msg('发布失败', {icon: 5, time: 1500})
+            }
+        }, error => {
+            console.error(error)
+            layer.msg('服务器内部异常', {icon: 5, time: 1500})
+        })
+    }
+
+    /**
+     * 加载留言数据
+     */
+    function loadLeaveData() {
+        get(null, '/leave/queryAll', res => {
+            if (res.data && res.data.length > 0) {
+                let data = res.data;
+                var str = '';
+                data.forEach(item => {
+                    str += '<li>\n' +
+                        '                        <div class="user-name">\n' +
+                        '                            <span>\n' +
+                        '                                 <i class="layui-icon layui-icon-username"></i> halo\n' +
+                        '                            </span>\n' +
+                        '                            <div class="leavetime" style="float: right">\n' +
+                        '                                <i class="layui-icon layui-icon-time"></i>\n' +
+                        '                            ' + item.createTime + '\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                        <div class="question">\n' +
+                        '                         ' + item.content + '   ' +
+                        '                        </div>\n' +
+                        '                        <div class="reply">\n' +
+                        '                           <a style="color: #1E9FFF;cursor: pointer;font-size: 14px">回复</a>\n' +
+                        '                        </div>\n' +
+                        '                    </li><hr>'
+
+
+                })
+                $('.leave-list ul').html(str);
+            }
+        }, error => {
+            console.error(error)
+            layer.msg('服务器内部异常', {icon: 5, time: 1500})
+        })
+    }
 </script>
 </html>

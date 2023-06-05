@@ -1,0 +1,37 @@
+.layui-layer-molv .layui-layer-title{
+    background: #1E9FFF;
+}
+.layui-input-block{
+    margin-left: 0px;
+}
+.leave-list{
+    background-color: #ffffff;
+    font-size: 20px;
+}
+
+.leave-list li{
+    margin: 25px;
+    height: 100%;
+}
+
+.user-name{
+    line-height: 30px;
+    height: 30px;
+    font-weight: bold;
+    color: #FFB800;
+}
+
+.leavetime{
+    line-height: 20px;
+    margin-top: 5px;
+    height: 20px;
+    font-size: 14px;
+    color: gray;
+}
+
+.question{
+    line-height: 2rem;
+    font-size: 14px;
+    color: black;
+    padding: 10px;
+}
