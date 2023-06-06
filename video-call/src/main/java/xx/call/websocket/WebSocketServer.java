@@ -38,6 +38,8 @@ public class WebSocketServer {
      */
     private String userId = "";
 
+
+
     /**
      * @Description: 连接建立成功调用的方法，成功建立之后，将用户的userName 存储到redis
      * @params: [session, userId]

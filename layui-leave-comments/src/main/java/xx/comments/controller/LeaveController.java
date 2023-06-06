@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,14 +31,11 @@ public class LeaveController extends ApiController {
 
     /**
      * 分页查询所有数据
-     *
-     * @param page  分页对象
-     * @param leave 查询实体
      * @return 所有数据
      */
-    @GetMapping
-    public R selectAll(Page<Leave> page, Leave leave) {
-        return success(this.leaveService.page(page, new QueryWrapper<>(leave)));
+    @GetMapping("queryAll")
+    public R queryAll() {
+        return success(this.leaveService.list());
     }
 
     /**
@@ -46,8 +44,9 @@ public class LeaveController extends ApiController {
      * @param leave 实体对象
      * @return 新增结果
      */
-    @PostMapping
+    @PostMapping("insert")
     public R insert(@RequestBody Leave leave) {
+        leave.setCreateTime(new Date());
         return success(this.leaveService.save(leave));
     }
 
@@ -57,7 +56,7 @@ public class LeaveController extends ApiController {
      * @param leave 实体对象
      * @return 修改结果
      */
-    @PutMapping
+    @PostMapping("update")
     public R update(@RequestBody Leave leave) {
         return success(this.leaveService.updateById(leave));
     }
@@ -68,8 +67,8 @@ public class LeaveController extends ApiController {
      * @param idList 主键结合
      * @return 删除结果
      */
-    @DeleteMapping
-    public R delete(@RequestParam("idList") List<Long> idList) {
+    @PostMapping("delete")
+    public R delete(@RequestBody List<Long> idList) {
         return success(this.leaveService.removeByIds(idList));
     }
 }

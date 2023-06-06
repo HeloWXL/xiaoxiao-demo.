@@ -29,7 +29,7 @@ spring:
 # Mybatis-Plus 配置
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Dao.xml
-  typeAliasesPackage: xx.excel.entity
+  typeAliasesPackage: xx.comments.entity
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: true
