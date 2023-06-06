@@ -7,14 +7,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class PageController {
 
-    /**
-     * 跳转至一对一视频通话
-     * @return
-     */
-    @GetMapping("toCall")
-    public ModelAndView toCall() {
-        return new ModelAndView("Call");
-    }
 
     /**
      * 跳转至会议

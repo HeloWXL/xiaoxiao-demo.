@@ -1,4 +1,3 @@
-
 /**
  * 信令服务器 相关
  */
@@ -10,7 +9,7 @@ var SOCKET = {
     /**
      * websocket 连接地址
      */
-    url: "" + window.location.protocol + "//" + window.location.host + "/sip/default/",
+    url: "" + window.location.protocol + "//" + window.location.host + "/sip/",
     /**
      * 开始建立连接
      * @returns {boolean}
@@ -25,6 +24,12 @@ var SOCKET = {
             layer.msg('请输入您的用户Id', {icon: 5, time: 1500})
             return false;
         }
+        var rId = $("#registerDialog input[name='roomId']").val();
+        if (rId === '' || rId == null) {
+            layer.msg('请输入您的用户Id', {icon: 5, time: 1500})
+            return false;
+        }
+        roomId = rId;
         userId = uId;
         SOCKET.url = SOCKET.url.replace("https", "wss").replace("http", "ws");
         //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
@@ -32,7 +37,7 @@ var SOCKET = {
             SOCKET.ws.close();
             SOCKET.ws = null;
         }
-        SOCKET.ws = new WebSocket(SOCKET.url + userId);
+        SOCKET.ws = new WebSocket(SOCKET.url + roomId + '/' + userId + '/1');
         //打开事件
         SOCKET.ws.onopen = SOCKET.onOpen;
         //关闭事件
@@ -48,6 +53,8 @@ var SOCKET = {
     onOpen: () => {
         layer.closeAll();
         layer.msg('信令服务器连接成功', {icon: 1, time: 1500});
+        // 开始建立房间
+        RTC.initRoom();
     },
     /**
      * 接收服务端推送消息

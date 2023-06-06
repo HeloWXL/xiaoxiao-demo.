@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-@ServerEndpoint(value = "/sip/{userId}", encoders = {EncoderUtil.class}, decoders = {DecoderUtil.class})
+@ServerEndpoint(value = "/sip/{roomID}/{userId}/{pub}", encoders = {EncoderUtil.class}, decoders = {DecoderUtil.class})
 public class WebSocketServer {
 
     /**
@@ -37,8 +37,6 @@ public class WebSocketServer {
      * 接收userId
      */
     private String userId = "";
-
-
 
     /**
      * @Description: 连接建立成功调用的方法，成功建立之后，将用户的userName 存储到redis
@@ -65,7 +63,7 @@ public class WebSocketServer {
      * @Date: 2020/5/9 9:13 PM
      */
     @OnMessage
-    public void onMessage(String message, @PathParam("userId") String userId) {
+    public void onMessage(String message) {
         log.info("用户消息:" + userId + ",报文:" + message);
         if (!("").equals(message)) {
             JSONObject jsonObject = JSON.parseObject(message);

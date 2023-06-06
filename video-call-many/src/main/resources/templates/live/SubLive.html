@@ -5,7 +5,7 @@
     <title>视频通话</title>
     <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}">
     <style>
-        .local-video, .remote-video {
+        .local-video{
             width: 100%;
             height: 400px;
         }
@@ -14,7 +14,7 @@
 <body>
 <div class="layui-container">
     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 25px;">
-        <legend style="margin-left: 40%;">视频通话</legend>
+        <legend style="margin-left: 40%;">直播</legend>
     </fieldset>
     <div class="layui-row layui-col-space5">
         <div class="layui-col-md6">
@@ -23,52 +23,17 @@
                 <video autoplay id="localVideo" class="local-video" th:poster="@{/images/a.jpeg}"></video>
             </div>
         </div>
-        <div class="layui-col-md6">
-            <blockquote class="layui-elem-quote">他人</blockquote>
-            <div>
-                <video autoplay id="remoteVideo" class="remote-video"
-                       th:poster="@{/images/b.webp}"></video>
-            </div>
-        </div>
     </div>
     <div class="layui-row">
         <div class="layui-col-xs12">
             <blockquote class="layui-elem-quote">操作区域</blockquote>
             <div class="layui-btn-container">
-                <button type="button" class="layui-btn layui-btn-normal" onclick="OPT.register()">注册</button>
-                <button type="button" class="layui-btn layui-btn-primary" onclick="OPT.videoSwitch()">摄像头</button>
-                <button type="button" class="layui-btn" onclick="OPT.audioSwitch()">音频</button>
-                <button type="button" class="layui-btn layui-btn-normal" onclick="OPT.shareScreen()">屏幕共享</button>
-                <button type="button" class="layui-btn layui-btn-danger" onclick="OPT.call()">呼叫</button>
+                <button type="button" class="layui-btn layui-btn-normal" onclick="OPT.register()">登录</button>
             </div>
         </div>
     </div>
 </div>
 </body>
-
-<!--注册弹窗-->
-<div id="registerDialog" style="display: none;margin-top:10px;">
-    <form class="layui-form">
-        <div class="layui-inline">
-            <label class="layui-form-label">用户名</label>
-            <div class="layui-input-inline">
-                <input type="text" name="userId" placeholder="请输入用户名" class="layui-input">
-            </div>
-        </div>
-    </form>
-</div>
-
-<!--呼叫弹窗-->
-<div id="callDialog" style="display: none;margin-top:10px;">
-    <form class="layui-form">
-        <div class="layui-inline">
-            <label class="layui-form-label">对方用户名</label>
-            <div class="layui-input-inline">
-                <input type="text" name="targetUserId" placeholder="请输入对方用户名" class="layui-input">
-            </div>
-        </div>
-    </form>
-</div>
 
 <!--jquery-->
 <script type="application/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
