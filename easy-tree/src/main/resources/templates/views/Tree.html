@@ -24,9 +24,9 @@
     <div class="layui-row layui-col-space1">
         <div class="layui-col-md4">
             <!-- 模块名 -->
-            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">折线图</blockquote>
+            <blockquote class="layui-elem-quote" style="border-left: 5px solid #3385FF;">树形结构</blockquote>
             <div class="echart-container" style="margin-top: 10px">
-                <div class="echart-div" id="line"></div>
+                <div id="test1" class="demo-tree demo-tree-box"></div>
             </div>
         </div>
         <div class="layui-col-md4">
@@ -51,151 +51,21 @@
 <script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
 <script type="text/javascript" th:src="@{/plugins/echart/echarts.min.js}"></script>
 <script>
+
+    var tree = null;
+    var layer = null;
+
+
     $(function () {
-        ECHART.init();
+
+        layui.use(['tree', 'util'], function(){
+             tree = layui.tree
+             layer = layui.layer
+
+
+
+
     })
-
-    /**
-     * 图表
-     */
-    var ECHART = {
-        init: () => {
-            ECHART.drawPie();
-            ECHART.drawLine();
-            ECHART.drawBar();
-        },
-        /**
-         * 绘制折线图
-         */
-        drawLine: () => {
-            let xData = [];
-            let seriesData = [];
-
-            // 通过接口获取动态数据
-            get('/echart/getLineData', null, res => {
-                if (res && res.flag === true) {
-                    let data = res.data;
-                    data.forEach(item=>{
-                        xData.push(item.name);
-                        seriesData.push(item.value);
-                    })
-                }
-            }, error => {
-                alert("获取数据异常");
-                console.error("获取柱状图数据异常:", error)
-            }, false);
-
-            var chartDom = document.getElementById('line');
-            var myChart = echarts.init(chartDom);
-            let option = {
-                xAxis: {
-                    type: 'category',
-                    data: xData
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: seriesData,
-                        type: 'line'
-                    }
-                ]
-            };
-            myChart.setOption(option);
-        },
-        /**
-         * 绘制柱状图
-         */
-        drawBar: () => {
-            let xData = [];
-            let seriesData = [];
-
-            // 通过接口获取动态数据
-            get('/echart/getBarData', null, res => {
-                if (res && res.flag === true) {
-                    let data = res.data;
-                    data.forEach(item=>{
-                        xData.push(item.name);
-                        seriesData.push(item.value);
-                    })
-                }
-            }, error => {
-                alert("获取数据异常");
-                console.error("获取柱状图数据异常:", error)
-            }, false);
-
-            var chartDom = document.getElementById('bar');
-            var myChart = echarts.init(chartDom);
-            let option = {
-                xAxis: {
-                    type: 'category',
-                    data: xData
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: seriesData,
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        }
-                    }
-                ]
-            };
-            myChart.setOption(option);
-        },
-        /**
-         * 绘制饼图
-         */
-        drawPie: () => {
-            let data = [];
-            // 通过接口获取动态数据
-            get('/echart/getPieData', null, res => {
-                if (res && res.flag === true) {
-                    data = res.data;
-                }
-            }, error => {
-                alert("获取数据异常");
-                console.error("获取饼图数据异常:", error)
-            }, false)
-            var chartDom = document.getElementById('pie');
-            var myChart = echarts.init(chartDom);
-            let option = {
-                title: {
-                    text: '文章数据统计',
-                    subtext: '统计',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left'
-                },
-                series: [
-                    {
-                        name: 'Access From',
-                        type: 'pie',
-                        radius: '50%',
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-            myChart.setOption(option);
-        }
-    }
 
 
     /**

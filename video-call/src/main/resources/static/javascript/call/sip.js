@@ -10,7 +10,7 @@ var SOCKET = {
     /**
      * websocket 连接地址
      */
-    url: "" + window.location.protocol + "//" + window.location.host + "/sip/default/",
+    url: "" + window.location.protocol + "//" + window.location.host + "/sip/",
     /**
      * 开始建立连接
      * @returns {boolean}
