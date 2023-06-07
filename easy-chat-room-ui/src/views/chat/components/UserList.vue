@@ -3,19 +3,12 @@
     <div class="main-top">
       <span>
           <el-avatar :src="require('@/assets/wx.png')"></el-avatar>
-          <span>系统消息</span>
+          <span>在线用户列表</span>
       </span>
     </div>
-
     <div class="user-list">
-      <div class="user">
-        Halo
-      </div>
-      <div class="user">
-        啦啦啦啦
-      </div>
-      <div class="user">
-        GOOOGO
+      <div class="user" v-for="(item,index) in userList" :key="index">
+        {{item.userId}}
       </div>
     </div>
   </div>
@@ -23,7 +16,35 @@
 
 <script>
 export default {
-  name: "UserList"
+  name: "UserList",
+  data(){
+    return {
+      userList:[]
+    }
+  },
+  methods:{
+    /**
+     * 加载所有的用户
+     * @param list
+     */
+    loadUserList(list){
+      this.userList = list;
+    },
+    /**
+     * 移除某一个用户
+     * @param userId
+     */
+    removeUserList(userId){
+      this.userList.forEach((item, index, arr)=>{
+        if(item === userId){
+          arr.splice(index, 1);
+        }
+      })
+    },
+    pushUserList(userId){
+     this.userList.push(userId)
+    }
+  }
 }
 </script>
 

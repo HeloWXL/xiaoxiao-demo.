@@ -12,7 +12,7 @@
     </div>
     <div style="margin-top: 60px">
       <div class="msg-list" v-for="(item,value) in msgList" :key="value">
-        <div v-if="item.type === 'robot'" class="other chat-box">
+        <div v-if="item.type === 'other'" class="other chat-box">
           <el-avatar size="medium" :src="require('@/assets/wx.png')" class="left-head-img"></el-avatar>
           <!--文本消息-->
           <div class="other-msg">

@@ -62,31 +62,60 @@ export default {
       // 设置连接成功时回调
       socket.successCallBack(() => {
         this.$message.success('连接成功')
+        // 获取 房间所有人
+        setTimeout(() => {
+          this.getRoomList()
+        }, 1000);
       });
       // 重写Socket中的消息接收方法
       socket.receive = (msg) => {
         msg = JSON.parse(msg.data);
-        let data = {
-          type: 'robot',
-          content: msg.content
+        if (msg.sysMsgType === 'join') {
+            this.$refs.sysMsg.pushSysMsg(msg.data+'加入了房间');
+          this.$refs.userList.pushUserList(msg.data)
         }
-        this.$refs.chatMain.pushMsg(data);
+        if (msg.sysMsgType === 'leave') {
+          this.$refs.sysMsg.pushSysMsg(msg.data+'离开了房间');
+          this.$refs.userList.removeUserList(msg.data)
+        }
+        if (msg.sysMsgType === 'roomList') {
+          this.$refs.userList.loadUserList(msg.data)
+        }
+        if (msg.sysMsgType === 'text') {
+          let data = {
+            type: 'other',
+            content: msg.data
+          }
+          this.$refs.chatMain.pushMsg(data);
+        }
+
       };
       // 开始建立连接
       socket.init();
     },
     /**
-     * 发送消息
+     * 发送消息 会将消息展示在页面上
      */
     sendMsg(obj) {
       socket.send(obj, () => {
-        let msgObj = {content: obj.msg, type: 'my'}
+        let msgObj = {content: obj.data, type: 'my'}
         this.$refs.chatMain.pushMsg(msgObj);
         this.$refs.chatFooter.clearContent()
       }, error => {
         console.log(error);
         this.$message.error('socket 出现未知异常,请查看控制台')
       });
+    },
+    /**
+     * 获取房间人列表
+     */
+    getRoomList(){
+      var msgObj = {
+        sysMsgType: 'roomList',
+        sender: this.$store.state.userId,
+        roomId: this.$store.state.roomId
+      }
+      socket.send(msgObj);
     }
   }
 }

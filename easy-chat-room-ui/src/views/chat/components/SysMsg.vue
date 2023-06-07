@@ -7,14 +7,8 @@
       </span>
     </div>
     <div class="sys-msg">
-      <div class="msg">
-        哈哈哈哈 进入房间了哦
-      </div>
-      <div class="msg">
-        哈哈哈哈 进入房间了哦
-      </div>
-      <div class="msg">
-        哈哈哈哈 进入房间了哦
+      <div class="msg" v-for="(item,index) in sysMsg" :key="index">
+       {{item}}
       </div>
     </div>
   </div>
@@ -22,7 +16,17 @@
 
 <script>
 export default {
-  name: "SysMsg"
+  name: "SysMsg",
+  data(){
+    return {
+      sysMsg:[]
+    }
+  },
+  methods:{
+    pushSysMsg(msg){
+      this.sysMsg.push(msg);
+    }
+  }
 }
 </script>
 

@@ -46,6 +46,8 @@ export default {
     joinRoom() {
       this.$refs['joinForm'].validate((valid) => {
         if (valid) {
+          this.$store.commit('setUserId',this.joinForm.userId);
+          this.$store.commit('setRoomId',this.joinForm.roomId)
           this.$emit('initServer', this.joinForm.roomId, this.joinForm.userId);
           this.dialogVisible = false;
         } else {
