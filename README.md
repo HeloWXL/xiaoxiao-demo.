@@ -9,7 +9,7 @@
 |        easy-chat         | 简单的在线聊天               |   是   | [easy-chat](https://www.bilibili.com/video/BV1TM4113796/)           |
 |      easy-chat-room      | 聊天室                   |   是   | 待发布                                                                 |
 |    easy-chat-by-voice    | 集成语音发送                |   否   | 待发布                                                                 |
-|       easy-chat-ui       | 简单的在线聊天<Vue>          |   否   | 待发布                                                                 |
+|       easy-chat-ui       | 简单的在线聊天<Vue>          |   是   | 待发布                                                                 |
 |       easy-editor        | 编辑器<HTML>             |   是   | [easy-editor ](https://www.bilibili.com/video/BV1KT411871U/)        |
 |      easy-editor-ui      | 编辑器<Vue>              |   否   | 待发布                                                                 |
 |        easy-login        | 基于Session登录           |   是   | [easy-login](https://www.bilibili.com/video/BV1co4y137Hq/)          |
