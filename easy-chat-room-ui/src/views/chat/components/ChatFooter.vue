@@ -17,12 +17,9 @@ export default {
     sendMsg() {
       if (this.content) {
         let obj = {
-          msg: this.content,
-          receiver:this.$store.state.targetId
+          msg: this.content
         }
         this.$emit('sendMsg', obj);
-      }else{
-        this.$message.warning('消息内容不能为空')
       }
     },
     /**

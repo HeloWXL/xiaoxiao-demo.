@@ -3,10 +3,11 @@
     <div class="main-top">
       <span>
           <el-avatar :src="require('@/assets/wx.png')"></el-avatar>
-          <span>{{ this.$store.state.targetId }}</span>
+          <span>房间号</span>
       </span>
       <span style="float: right;line-height: 50px">
-        <i class="el-icon-setting" style="font-size: 25px;cursor: pointer" @click="register"></i>
+        <i class="el-icon-setting" style="font-size: 25px;cursor: pointer;margin-right: 5px"></i>
+        <i class="el-icon-thumb" style="font-size: 25px;cursor: pointer;margin-right: 5px" @click="openJoinRoomDialog"></i>
       </span>
     </div>
     <div style="margin-top: 60px">
@@ -28,19 +29,17 @@
         </div>
       </div>
     </div>
-    <!--注册弹窗-->
-    <register-dialog ref="registerDialog" @initServer="initServer"></register-dialog>
+    <!-- 加入房间弹窗-->
+    <join-room-dialog ref="joinRoomDialog" @initServer="initServer"></join-room-dialog>
   </div>
 </template>
 
 <script>
-import RegisterDialog from "@/views/chat/components/RegisterDialog";
+import JoinRoomDialog from "@/views/chat/components/JoinRoomDialog";
 
 export default {
   name: "ChatMain",
-  components: {
-    RegisterDialog
-  },
+  components: {JoinRoomDialog},
   data() {
     return {
       msgList: []
@@ -64,23 +63,23 @@ export default {
         div.scrollTop = div.scrollHeight - div.clientHeight;
       })
     },
-    /**
-     * 连接WS
-     */
-    initServer() {
-      this.$emit('initServer');
+    openJoinRoomDialog(){
+      this.$refs.joinRoomDialog.dialogVisible = true;
     },
     /**
-     * 打开注册界面
+     * 建立连接
+     * @param roomId
+     * @param userId
      */
-    register() {
-      this.$refs.registerDialog.dialogVisible = true;
+    initServer(roomId, userId) {
+      this.$emit('initServer', roomId, userId);
     }
   }
 }
 </script>
 
 <style scoped>
+
 .chat-main {
   overflow: auto;
   height: calc(100vh - 95px);
@@ -155,7 +154,7 @@ export default {
 
 .main-top {
   position: fixed;
-  width: 575px;
+  width: 680px;
   padding: 5px;
   height: 50px;
   border-bottom: 1px solid #eff3f6;
