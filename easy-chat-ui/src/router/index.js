@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Chat from '@/views/chat/Chat'
+import Chat from '@/views/chat/index'
 
 import VueRouter from "vue-router";
 

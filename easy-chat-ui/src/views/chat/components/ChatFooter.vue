@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: "FooterComponent",
+  name: "ChatFooter",
   data() {
     return {
       content: ''
@@ -15,19 +15,17 @@ export default {
   },
   methods: {
     sendMsg() {
-      if(this.content){
+      if (this.content) {
         let obj = {
-          content:this.content
+          msg: this.content
         }
-        this.$emit('sendMsg',obj,()=>{
-          this.clearContent();
-        });
+        this.$emit('sendMsg', obj);
       }
     },
     /**
      * 清除会话框
      */
-    clearContent(){
+    clearContent() {
       this.content = ''
     }
   }
@@ -35,15 +33,16 @@ export default {
 </script>
 
 <style scoped>
-.footer-send-btn{
-  position: absolute;
-  bottom: 67px;
-  right: 35px;
+.footer-send-btn {
+  position: relative;
+  bottom: 35px;
+  right: 5px;
+  float: right;
   height: 30px;
 }
 
-.el-input input{
-  border-radius: 20px!important;
+.el-input input {
+  border-radius: 20px !important;
 }
 
 .el-button.is-round {
