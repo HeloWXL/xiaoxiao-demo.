@@ -17,7 +17,10 @@ export default {
     sendMsg() {
       if (this.content) {
         let obj = {
-          msg: this.content
+          sender: this.$store.state.userId,
+          roomId: this.$store.state.roomId,
+          sysMsgType: 'text',
+          data: this.content
         }
         this.$emit('sendMsg', obj);
       }

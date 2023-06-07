@@ -99,7 +99,7 @@ export default {
 }
 
 .other {
-  padding: 10px 5px;
+  padding: 0px 5px;
   margin: 0 10px;
   text-align: left;
 }
@@ -154,7 +154,7 @@ export default {
 
 .main-top {
   position: fixed;
-  width: 680px;
+  width: 610px;
   padding: 5px;
   height: 50px;
   border-bottom: 1px solid #eff3f6;

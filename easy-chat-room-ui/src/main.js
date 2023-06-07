@@ -12,7 +12,7 @@ import router from './router'
 
 import store  from "./store/index";
 
-Vue.prototype.$wsServerUrl =  'ws://localhost:8076/chat/'
+Vue.prototype.$wsServerUrl =  'ws://192.168.10.38:8076/chat/'
 
 new Vue({
   render: h => h(App),

@@ -71,11 +71,11 @@ export default {
       socket.receive = (msg) => {
         msg = JSON.parse(msg.data);
         if (msg.sysMsgType === 'join') {
-            this.$refs.sysMsg.pushSysMsg(msg.data+'加入了房间');
+          this.$refs.sysMsg.pushSysMsg(msg.data + '加入了房间');
           this.$refs.userList.pushUserList(msg.data)
         }
         if (msg.sysMsgType === 'leave') {
-          this.$refs.sysMsg.pushSysMsg(msg.data+'离开了房间');
+          this.$refs.sysMsg.pushSysMsg(msg.data + '离开了房间');
           this.$refs.userList.removeUserList(msg.data)
         }
         if (msg.sysMsgType === 'roomList') {
@@ -109,7 +109,7 @@ export default {
     /**
      * 获取房间人列表
      */
-    getRoomList(){
+    getRoomList() {
       var msgObj = {
         sysMsgType: 'roomList',
         sender: this.$store.state.userId,
