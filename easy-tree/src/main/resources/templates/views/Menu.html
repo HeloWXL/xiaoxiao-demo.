@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>菜单</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
+</head>
+<body>
+<div>
+    <ul class="layui-nav layui-nav-tree" lay-shrink="all">
+        <li class="layui-nav-item" th:each="menu:${menus}">
+            <a href="javascript:;" th:text="${menu.menuName}"></a>
+            <dl th:each="children:${menu.childrenList}" class="layui-nav-child layui-nav-child-c">
+                <dd><a href="javascript:;" th:text="${children.menuName}"></a></dd>
+            </dl>
+        </li>
+    </ul>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+
+<script>
+
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+
+</script>
+
+</html>

@@ -63,14 +63,6 @@ public class MenuTree {
 
     public static void main(String[] args) {
         List<Menu> menuList = new ArrayList<>();
-        menuList.add(new Menu(1L, 0L, "一级菜单1"));
-        menuList.add(new Menu(2L, 0L, "一级菜单2"));
-        menuList.add(new Menu(3L, 0L, "一级菜单3"));
-        menuList.add(new Menu(4L, 1L, "二级菜单1"));
-        menuList.add(new Menu(5L, 1L, "二级菜单2"));
-        menuList.add(new Menu(6L, 4L, "三级菜单"));
-        menuList.add(new Menu(7L, 6L, "四级菜单"));
-
         MenuTree menuTree = new MenuTree(menuList);
         List<Menu> menus = menuTree.buildTree();
     }

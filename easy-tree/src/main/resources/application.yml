@@ -3,7 +3,7 @@
 
 # 服务端口配置
 server:
-  port: 8088
+  port: 8097
 
 # Spring 相关配置
 spring:
