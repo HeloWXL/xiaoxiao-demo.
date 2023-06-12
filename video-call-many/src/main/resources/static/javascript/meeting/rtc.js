@@ -44,8 +44,8 @@ var RTC = {
     onRemoteOffer: async (fromUid, offer) => {
         let pcKey = userId + '-' + fromUid
         let pc = new PeerConnection(rtcPcParams)
-        RtcPcMaps.set(pcKey, pc)
-        RTC.onPcEvent(pc, userId, fromUid)
+        RtcPcMaps.set(pcKey, pc);
+        RTC.onPcEvent(pc, userId, fromUid);
         for (const track of localStream.getTracks()) {
             pc.addTrack(track);
         }
@@ -127,37 +127,19 @@ var RTC = {
         video.srcObject = newStream
         video.muted = true
     },
-    /**
-     * 显示远程视频流
-     * @param domId
-     * @param track
-     */
-    async setRemoteDomVideoStream(domId, track) {
-        let video = document.getElementById(domId)
-        let stream = video.srcObject
-        if (stream) {
-            stream.addTrack(track)
-        } else {
-            let newStream = new MediaStream()
-            newStream.addTrack(track)
-            video.srcObject = newStream
-            video.muted = true
-        }
-    },
-
     createOtherDom(remoteUid,track){
-        let id = remoteUid+'-media'
-        let video = document.getElementById(id)
-
-        video = document.createElement('video')
-        video.id = id
-        video.controls = false;
-        video.autoplay = true;
-        video.muted = false
-        video.className = 'remote-video'
+        let id = remoteUid+'-video'
+        let video = document.getElementById(id);
+        if(!video){
+            video = document.createElement('video')
+            video.id = id
+            video.controls = false;
+            video.autoplay = true;
+            video.muted = false
+            video.className = 'remote-video'
+        }
 
         let stream = video.srcObject
-        console.log("stream==>trick",stream,track)
         if(stream){
             stream.addTrack(track)
         }else{
@@ -166,6 +148,9 @@ var RTC = {
             video.srcObject =newStream
             video.muted = false
         }
-        $('#other-container').append(video)
+        let div = document.createElement('div');
+        div.className = 'layui-col-xs3';
+        div.appendChild(video);
+        $('#other-container').append(div)
     }
 }
