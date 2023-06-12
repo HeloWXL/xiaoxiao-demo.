@@ -7,14 +7,13 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class PageController {
 
-
     /**
      * 跳转至会议
      * @return
      */
     @GetMapping("toMeeting")
     public ModelAndView toMeeting() {
-        return new ModelAndView("/Meeting");
+        return new ModelAndView("/meet/Meeting");
     }
 
     /**

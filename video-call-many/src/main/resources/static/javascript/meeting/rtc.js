@@ -10,6 +10,31 @@ var RTC = {
             localStream = await RTC.getLocalUserMedia();
             RTC.setDomVideoStream("localVideo", localStream);
         }
+        const localUid = userId
+        //找到当前房间的视频流发布者 即主播
+        let others = this.roomList.filter(e => e.userId !== localUid).map((e) => {
+            return e.userId
+        })
+        others.forEach(async (uid) => {
+            //和发布者建立RTC连接 不发送自己视频流
+            let pcKey = localUid + '-' + uid
+            let pc = RtcPcMaps.get(pcKey);
+            if (!pc) {
+                pc = new PeerConnection(rtcPcParams)
+                RtcPcMaps.set(pcKey, pc)
+            }
+            for (const track of localStream.getTracks()) {
+                pc.addTrack(track);
+            }
+            RTC.onPcEvent(pc, localUid, uid)
+            //创建offer
+            let offer = await pc.createOffer();
+            //设置offer未本地描述
+            await pc.setLocalDescription(offer)
+            //发送offer给被呼叫端
+            let params = {'type': 'offer', "targetUid": uid, "userId": localUid, "offer": offer}
+            SOCKET.sendMsg(params)
+        })
     },
     /**
      * 信息交换
@@ -18,7 +43,7 @@ var RTC = {
      */
     onRemoteOffer: async (fromUid, offer) => {
         let pcKey = userId + '-' + fromUid
-        let pc = new PeerConnection(this.rtcPcParams)
+        let pc = new PeerConnection(rtcPcParams)
         RtcPcMaps.set(pcKey, pc)
         RTC.onPcEvent(pc, userId, fromUid)
         for (const track of localStream.getTracks()) {
@@ -59,7 +84,7 @@ var RTC = {
      */
     onPcEvent: (pc, localUid, remoteUid) => {
         pc.ontrack = function (event) {
-            RTC.setRemoteDomVideoStream("remoteVideo", event.track)
+            RTC.createOtherDom(remoteUid,event.track)
         };
         pc.onicecandidate = (event) => {
             if (event.candidate) {
@@ -119,4 +144,28 @@ var RTC = {
             video.muted = true
         }
     },
+
+    createOtherDom(remoteUid,track){
+        let id = remoteUid+'-media'
+        let video = document.getElementById(id)
+
+        video = document.createElement('video')
+        video.id = id
+        video.controls = false;
+        video.autoplay = true;
+        video.muted = false
+        video.className = 'remote-video'
+
+        let stream = video.srcObject
+        console.log("stream==>trick",stream,track)
+        if(stream){
+            stream.addTrack(track)
+        }else{
+            let newStream = new MediaStream()
+            newStream.addTrack(track)
+            video.srcObject =newStream
+            video.muted = false
+        }
+        $('#other-container').append(video)
+    }
 }

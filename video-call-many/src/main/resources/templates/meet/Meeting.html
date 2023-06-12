@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>视频通话</title>
@@ -25,9 +25,8 @@
         </div>
         <div class="layui-col-md6">
             <blockquote class="layui-elem-quote">他人</blockquote>
-            <div>
-                <video autoplay id="remoteVideo" class="remote-video"
-                       th:poster="@{/images/b.webp}"></video>
+            <div id="other-container">
+                <video autoplay id="remoteVideo" class="remote-video" th:poster="@{/images/b.webp}"></video>
             </div>
         </div>
     </div>
@@ -49,22 +48,16 @@
 <!--注册弹窗-->
 <div id="registerDialog" style="display: none;margin-top:10px;">
     <form class="layui-form">
-        <div class="layui-inline">
-            <label class="layui-form-label">用户名</label>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名：</label>
             <div class="layui-input-inline">
                 <input type="text" name="userId" placeholder="请输入用户名" class="layui-input">
             </div>
         </div>
-    </form>
-</div>
-
-<!--呼叫弹窗-->
-<div id="callDialog" style="display: none;margin-top:10px;">
-    <form class="layui-form">
-        <div class="layui-inline">
-            <label class="layui-form-label">对方用户名</label>
+        <div class="layui-form-item">
+            <label class="layui-form-label">房间号：</label>
             <div class="layui-input-inline">
-                <input type="text" name="targetUserId" placeholder="请输入对方用户名" class="layui-input">
+                <input type="text" name="roomId" placeholder="请输入房间号" class="layui-input">
             </div>
         </div>
     </form>
@@ -75,11 +68,11 @@
 <!--layui-->
 <script type="application/javascript" th:src="@{/plugins/layui/layui.js}"></script>
 <!--rtc-->
-<script type="application/javascript" th:src="@{/javascript/call/rtc.js}"></script>
+<script type="application/javascript" th:src="@{/javascript/meeting/rtc.js}"></script>
 <!--sip-->
-<script type="application/javascript" th:src="@{/javascript/call/sip.js}"></script>
+<script type="application/javascript" th:src="@{/javascript/meeting/sip.js}"></script>
 <!--opt-->
-<script type="application/javascript" th:src="@{/javascript/call/opt.js}"></script>
+<script type="application/javascript" th:src="@{/javascript/meeting/opt.js}"></script>
 
 <script>
     /**
@@ -93,8 +86,27 @@
      */
     var localRtcPc, localStream = null;
 
-    // 声明用户ID 、 呼叫者ID
-    var userId, targetUserId = null;
+    // 声明用户ID
+    var userId,roomId = null;
+
+    var roomList = [];
+
+    /**
+     * 存放peerconnection
+     */
+    var RtcPcMaps = new Map();
+
+    /**
+     * 公共STUN
+     * @type {{iceServers: [{urls: string}]}}
+     */
+    var  rtcPcParams = {
+        iceServers: [
+            {urls: 'stun:stun.l.google.com:19302'}
+        ]
+    }
+
+
 
     var layer = null;
 
