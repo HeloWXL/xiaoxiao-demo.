@@ -25,3 +25,16 @@ spring:
     #    #配置模板路径，默认是templates，可以不用配置
     prefix: classpath:/templates
     suffix: .html
+
+  redis:
+    database: 2
+    host: localhost
+    port: 6379
+    password: 123456
+    timeout: 6000ms
+    jedis:
+      pool:
+        max-active: 200
+        max-wait: -1
+        max-idle: 10
+        min-idle: 0

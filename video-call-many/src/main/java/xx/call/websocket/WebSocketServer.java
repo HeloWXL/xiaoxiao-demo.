@@ -3,8 +3,10 @@ package xx.call.websocket;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import xx.call.dto.SignalEntity;
+import xx.call.util.SpringUtils;
 import xx.call.websocket.util.DecoderUtil;
 import xx.call.websocket.util.EncoderUtil;
 
@@ -12,14 +14,22 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-@ServerEndpoint(value = "/sip/{roomID}/{userId}/{pub}", encoders = {EncoderUtil.class}, decoders = {DecoderUtil.class})
+@ServerEndpoint(value = "/signal/{roomId}/{userId}/{pub}", encoders = {EncoderUtil.class}, decoders = {DecoderUtil.class})
 public class WebSocketServer {
+    /**
+     * RedisTemplate
+     */
+    private RedisTemplate redisTemplate = (RedisTemplate) SpringUtils.getBean("redisTemplate");
 
+    private static String ROOM_KEY = "meeting-room::";
     /**
      * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
      */
@@ -37,6 +47,14 @@ public class WebSocketServer {
      * 接收userId
      */
     private String userId = "";
+    /**
+     * 房间号
+     */
+    private String roomId = "";
+    /**
+     * 1 表示 主播 或者 会议主持人
+     */
+    private Integer pub = 0;
 
     /**
      * @Description: 连接建立成功调用的方法，成功建立之后，将用户的userName 存储到redis
@@ -46,12 +64,35 @@ public class WebSocketServer {
      * @Date: 2020/5/9 9:13 PM
      */
     @OnOpen
-    public void onOpen(Session session, @PathParam("userId") String userId) {
+    public void onOpen(Session session, @PathParam("userId") String userId,
+                       @PathParam("roomId") String roomId,
+                       @PathParam("pub") Integer pub) {
         this.session = session;
         this.userId = userId;
+        this.roomId = roomId;
+        this.pub = pub;
         webSocketMap.put(userId, this);
         addOnlineCount();
-        log.info("用户加入:{},当前在线人数为:{}", userId, getOnlineCount());
+        addUserToRoom(userId, roomId, pub);
+        log.info("房间号：{} 用户加入:{},身份：{},当前在线人数为:{}", roomId, userId, pub, getOnlineCount());
+    }
+
+    /**
+     * @Description: 连接关闭调用的方法
+     * @params: []
+     * @return: void
+     * @Author: wangxianlin
+     * @Date: 2020/5/9 9:13 PM
+     */
+    @OnClose
+    public void onClose() {
+        if (webSocketMap.containsKey(userId)) {
+            webSocketMap.remove(userId);
+            //从set中删除
+            subOnlineCount();
+            leaveRoom(roomId, userId);
+        }
+        log.info("房间号：" + roomId + ",用户退出:" + userId + ",当前在线人数为:" + getOnlineCount());
     }
 
 
@@ -68,33 +109,20 @@ public class WebSocketServer {
         if (!("").equals(message)) {
             JSONObject jsonObject = JSON.parseObject(message);
             String type = jsonObject.getString("type");
-            // offer
             if (Objects.equals(type, "offer")) {
                 String targetUid = jsonObject.getString("targetUid");
                 oneToOne(targetUid, new SignalEntity("offer", "rtc offer", 200, jsonObject));
-            }
-            // 远程呼叫
-            else if (Objects.equals(type, "call")) {
+            } else if (Objects.equals(type, "call")) {
                 String targetUid = jsonObject.getString("targetUid");
                 oneToOne(targetUid, new SignalEntity("call", "远程呼叫", 200, jsonObject));
-            }
-            // 对方已接听
-            else if (Objects.equals(type, "accept")) {
-                String targetUid = jsonObject.getString("targetUid");
-                oneToOne(targetUid, new SignalEntity("accept", "对方已接听", 200, jsonObject));
-            }
-            // 对方拒绝通话
-            else if (Objects.equals(type, "reject")) {
-                String targetUid = jsonObject.getString("targetUid");
-                oneToOne(targetUid, new SignalEntity("reject", "对方拒绝通话", 200, jsonObject));
-            }
-            // candidate
-            else if (Objects.equals(type, "candidate")) {
+            } else if (Objects.equals(type, "roomUserList")) {
+                // 房间号
+                String roomId = jsonObject.getString("roomId");
+                oneToOne(userId, new SignalEntity("roomUserList", "房间人数", 200, getRoomUserList(roomId)));
+            } else if (Objects.equals(type, "candidate")) {
                 String targetUid = jsonObject.getString("targetUid");
                 oneToOne(targetUid, new SignalEntity("candidate", "ice candidate", 200, jsonObject));
-            }
-            // answer
-            else if (Objects.equals(type, "answer")) {
+            } else if (Objects.equals(type, "answer")) {
                 String targetUid = jsonObject.getString("targetUid");
                 oneToOne(targetUid, new SignalEntity("answer", "rtc answer", 200, jsonObject));
             }
@@ -125,21 +153,66 @@ public class WebSocketServer {
         }
     }
 
+
     /**
-     * @Description: 连接关闭调用的方法
-     * @params: []
-     * @return: void
-     * @Author: wangxianlin
-     * @Date: 2020/5/9 9:13 PM
+     * 推送消息给房间所有人
+     *
+     * @param roomId
      */
-    @OnClose
-    public void onClose() {
-        if (webSocketMap.containsKey(userId)) {
-            webSocketMap.remove(userId);
-            //从set中删除
-            subOnlineCount();
-        }
-        log.info("用户退出:" + userId + ",当前在线人数为:" + getOnlineCount());
+    public void oneToRoom(String roomId, SignalEntity data) {
+        Map<String, Object> res = getAllUserFromRoom(roomId);
+        res.forEach((key, value) -> {
+            oneToOne(key, data);
+        });
+    }
+
+    /**
+     * @param roomId
+     * @return
+     */
+    public List<Object> getRoomUserList(String roomId) {
+        List<Object> list = new ArrayList<>();
+        Map<String, Object> res = getAllUserFromRoom(roomId);
+        res.forEach((key, value) -> {
+            list.add(value);
+        });
+        return list;
+    }
+
+    /**
+     * 用户断开连接 离开房间
+     *
+     * @param roomId
+     * @param userId
+     */
+    public void leaveRoom(String roomId, String userId) {
+        redisTemplate.opsForHash().delete(ROOM_KEY + roomId, userId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userId", userId);
+        jsonObject.put("roomId", roomId);
+        jsonObject.put("nickName", userId);
+        jsonObject.put("pub", pub);
+        oneToRoom(roomId, new SignalEntity("leave", userId + " leave then room", 200, jsonObject));
+    }
+
+    /**
+     * 根据房间号获取人员信息
+     *
+     * @param roomId
+     */
+    public Map<String, Object> getAllUserFromRoom(String roomId) {
+        Map<String, Object> map = redisTemplate.opsForHash().entries(ROOM_KEY + roomId);
+        return map;
+    }
+
+    public void addUserToRoom(String userId, String roomId, Integer pub) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userId", userId);
+        jsonObject.put("roomId", roomId);
+        jsonObject.put("nickName", userId);
+        jsonObject.put("pub", pub);
+        redisTemplate.opsForHash().put(ROOM_KEY + roomId, userId, jsonObject);
+        oneToRoom(roomId, new SignalEntity("join", userId + " join then room", 200, jsonObject));
     }
 
     /**

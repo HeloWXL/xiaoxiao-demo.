@@ -18,9 +18,9 @@
     </fieldset>
     <div class="layui-row layui-col-space5">
         <div class="layui-col-md6">
-            <blockquote class="layui-elem-quote">我</blockquote>
+            <blockquote class="layui-elem-quote">主播画面</blockquote>
             <div>
-                <video autoplay id="localVideo" class="local-video" th:poster="@{/images/a.jpeg}"></video>
+                <video autoplay id="remoteVideo" class="local-video" th:poster="@{/images/a.jpeg}"></video>
             </div>
         </div>
     </div>
@@ -34,17 +34,39 @@
     </div>
 </div>
 </body>
-
+<!--注册弹窗-->
+<div id="registerDialog" style="display: none;margin-top:10px;">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="userId" placeholder="请输入用户名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">身份：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="isPub" value="2" title="观众">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">房间号：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="roomId" placeholder="请输入房间号" class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
 <!--jquery-->
 <script type="application/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
 <!--layui-->
 <script type="application/javascript" th:src="@{/plugins/layui/layui.js}"></script>
 <!--rtc-->
-<script type="application/javascript" th:src="@{/javascript/call/rtc.js}"></script>
+<script type="application/javascript" th:src="@{/javascript/live/sub/rtc.js}"></script>
 <!--sip-->
-<script type="application/javascript" th:src="@{/javascript/call/sip.js}"></script>
+<script type="application/javascript" th:src="@{/javascript/live/sub/sip.js}"></script>
 <!--opt-->
-<script type="application/javascript" th:src="@{/javascript/call/opt.js}"></script>
+<script type="application/javascript" th:src="@{/javascript/live/sub/opt.js}"></script>
 
 <script>
     /**
@@ -53,15 +75,35 @@
     var PeerConnection = window.RTCPeerConnection ||
         window.mozRTCPeerConnection ||
         window.webkitRTCPeerConnection;
+
+    /**
+     * 公共STUN
+     * @type {{iceServers: [{urls: string}]}}
+     */
+    var  rtcPcParams = {
+        iceServers: [
+            {urls: 'stun:stun.l.google.com:19302'}
+        ]
+    }
+
     /**
      * 本地peerconnection 对象
      */
     var localRtcPc, localStream = null;
 
-    // 声明用户ID 、 呼叫者ID
-    var userId, targetUserId = null;
+    /**
+     * 存放观众的peerconnection
+     */
+    var RtcPcMaps = new Map();
 
-    var layer = null;
+    // 声明用户ID 、 房间号 ,身份
+    var userId, roomId, isPub = null;
+
+    // 存放房间人
+    var roomList = [];
+
+
+    var layer, form = null;
 
     $(function () {
         Layui.init();
@@ -76,8 +118,9 @@
          * 初始化layui
          */
         init: () => {
-            layui.use(['layer'], function () {
+            layui.use(['layer', 'form'], function () {
                 layer = layui.layer;
+                form = layui.form;
             });
         }
     }
