@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class NoteAccept extends Model<NoteAccept> {
     //通知主键（对应通知详情表中的一条具体记录）
     @TableId(type = IdType.AUTO)
-    private Long noteId;
+    private Integer noteId;
     //员工主键（对应员工信息表中的一条具体记录）
     private String staffId;
     //通知的类型（0：实时通知；1：登录时通知；2：定时通知）

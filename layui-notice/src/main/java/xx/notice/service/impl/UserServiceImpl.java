@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import xx.notice.common.ConstantUtil;
 import xx.notice.dao.UserDao;
 import xx.notice.entity.User;
+import xx.notice.filter.SessionContent;
 import xx.notice.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
              //重新生成session
              HttpSession session = request.getSession(true);
              session.setAttribute(ConstantUtil.SESSION_KEY,targetUser);
+             SessionContent.setUserInfoLocal(targetUser);
              return R.ok("登录成功");
          }else{
              return R.failed("用户名密码错误");

@@ -2,7 +2,10 @@ package xx.notice.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import xx.notice.entity.User;
+
+import java.util.List;
 
 /**
  * (User)表数据库访问层
@@ -12,5 +15,6 @@ import xx.notice.entity.User;
  */
 @Mapper
 public interface UserDao extends BaseMapper<User> {
-
+    @Select(" select user_id from user ")
+    List<String> queryUserList();
 }
