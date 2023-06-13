@@ -85,4 +85,13 @@ SpeechSynthesisUtterance()函数 函数目前处于实验性阶段，在使用�
 
 - SpeechSynthesis.speaking 只读 当语音谈话正在进行的时候，即使SpeechSynthesis处于暂停状态， Boolean 返回 true。
 
+> 使用
 
+```js
+function speak() {
+    var utterThis = new window.SpeechSynthesisUtterance()
+    utterThis.text = "测试测试测试测试";
+    window.speechSynthesis.speak(utterThis)
+  }
+  speak();
+```

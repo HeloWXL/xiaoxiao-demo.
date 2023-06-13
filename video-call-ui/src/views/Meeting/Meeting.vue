@@ -1,7 +1,7 @@
 <template>
   <div class="meeting-container">
     <el-row :gutter="20">
-      <el-col :span="expanState?0:18">
+      <el-col span="24">
         <!--标题-->
         <el-row>
           <el-col :span="24">
@@ -96,7 +96,7 @@
                   </el-tooltip>
                 </span>
                 <span>
-                  <el-tooltip effect="dark" content="加入房间" placement="top">
+                  <el-tooltip effect="dark" content="开始会议" placement="top">
                        <el-button icon="el-icon-phone" circle class="shardBtn"
                                   @click="dialogVisible = true"></el-button>
                   </el-tooltip>
@@ -106,56 +106,13 @@
           </el-container>
         </div>
       </el-col>
-      <el-col :span="expanState?24:6">
-        <h1>使用手册及文档
-          <span>
-               <el-tooltip v-if="expanState === true" content="还原" placement="top">
-                   <i class="el-icon-refresh-left" @click="expanState = !expanState"></i>
-               </el-tooltip>
-               <el-tooltip v-if="expanState === false" content="全屏" placement="top">
-                   <i class="el-icon-full-screen" @click="expanState = !expanState"></i>
-               </el-tooltip>
-            </span>
-        </h1>
-        <div class="document">
-          <mavon-editor
-              v-model="content"
-              :ishljs="true"
-              default-open="preview"
-              :editable="false"
-              :subfield="false"
-              :toolbarsFlag="false"
-          />
-        </div>
-      </el-col>
     </el-row>
-    <!--进入直播间-->
-    <el-dialog
-        title="进入直播间"
-        :visible.sync="dialogVisible"
-        width="30%"
-        center>
-      <el-form ref="userInfoForm" label-width="80px" :model="userInfo" :rules="userInfoRules">
-        <el-form-item label="用户名：" prop="userId">
-          <el-input v-model="userInfo.userId"></el-input>
-        </el-form-item>
-        <el-form-item label="房间号：" prop="roomId">
-          <el-input v-model="userInfo.roomId"></el-input>
-        </el-form-item>
-        <el-form-item label="角色：" prop="pub">
-          <el-radio v-model="userInfo.pub" label="1">主持人</el-radio>
-          <el-radio v-model="userInfo.pub" label="0">参会人员</el-radio>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="gotoMeetingRoom('userInfoForm')">确 定</el-button>
-   </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
+import {socket} from "@/util/socket";
+
 var PeerConnection = window.RTCPeerConnection ||
     window.mozRTCPeerConnection ||
     window.webkitRTCPeerConnection;
@@ -163,25 +120,12 @@ var PeerConnection = window.RTCPeerConnection ||
 // 存放其他用户的PeerConnection
 var RtcPcMaps = new Map();
 
-const md = require('@/md/Meeting.md')
 export default {
   name: "WebrtcMeeting",
   data() {
     return {
       content: md,
       loading: false,
-      expanState: false,
-      // 用户信息
-      userInfo: {
-        // 用户ID
-        userId: 'a',
-        // 房间ID
-        roomId: 'room1',
-        // 1:主播 0:观众
-        pub: '0'
-      },
-      // 控制用户注册信息弹窗
-      dialogVisible: false,
       // 房间人数 列表
       roomList: [],
       // websocket对象
@@ -193,100 +137,41 @@ export default {
           {urls: 'stun:stun.l.google.com:19302'}
         ]
       },
-      userInfoRules: {
-        userId: [
-          {required: true, message: '请填写用户名', trigger: 'blur'}
-        ],
-        roomId: [
-          {required: true, message: '请填写房间号', trigger: 'blur'}
-        ],
-        pub: [
-          {required: true, message: '请选择角色', trigger: 'blur'}
-        ]
-      },
       // 本地媒体流
       localStream: null
     };
-  },
-  /**
-   * 生命周期 - 创建完成（可以访问当前this实例）
-   */
-  created() {
-    console.log(PeerConnection)
-  },
-  /**
-   * 生命周期 - 挂载完成（可以访问DOM元素）
-   */
-  mounted() {
-
   },
   /**
    * 方法集合
    */
   methods: {
     /**
-     * 进入会议
-     */
-    gotoMeetingRoom(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.init()
-          this.dialogVisible = false
-        } else {
-          this.$notify.warning('请完善表单信息');
-        }
-      })
-    },
-    /**
      * 连接信令服务器
      */
-    init() {
-      const that = this
-      if (that.ws != null) {
-        that.ws.close();
-        that.ws = null;
-      }
-      that.ws = new WebSocket(that.$sipServerRoomUrl + '/' + that.userInfo.roomId + '/' + that.userInfo.userId + '/' + that.userInfo.pub);
+    init(userId, roomId, pub) {
+      let that = this;
+      socket.ws_url = that.$sipServerRoomUrl + '/' + roomId + '/' + userId + '/' + pub
       /**
-       * 成功建立websocket连接
+       * 重新定义信令连接成功
        */
-      that.ws.onopen = function () {
+      socket.successCallBack = ()=>{
         that.$notify({
           title: '提示',
           message: '信令服务器连接成功',
           type: 'success'
         });
-
         //视频会议初始化
         setTimeout(async () => {
           if (that.roomList.length) {
             await that.initMeetingRoomPc()
           }
         }, 2000)
-      };
-      //
+      }
       /**
-       * websocket连接关闭
-       */
-      that.ws.onclose = function (e) {
-        console.log("websocket已关闭", e);
-      };
-      /**
-       * 发生了错误事件
-       */
-      that.ws.onerror = function () {
-        that.$notify({
-          title: '提示',
-          message: '信令服务器连接失败',
-          type: 'error'
-        });
-        console.log("websocket发生了错误");
-      };
-      /**
-       * 接收消息
+       * 重新定义消息接收
        * @param msg
        */
-      that.ws.onmessage = function (msg) {
+      socket.receive = (msg)=>{
         msg = JSON.parse(msg.data);
         // 加入和离开房间
         if (msg.type === 'join' || msg.type === 'leave') {
@@ -324,7 +209,8 @@ export default {
           let data = JSON.parse(msg.data)
           that.onCandiDate(data.userId, data.candidate)
         }
-      };
+      }
+      socket.init();
     },
     /**
      * 初始化房间信息
@@ -501,12 +387,21 @@ export default {
       video.srcObject = newStream
       video.muted = true
     },
+    /**
+     * 摄像头控制
+     */
     videoSet() {
 
     },
+    /**
+     * 麦克风控制
+     */
     audioSet() {
 
     },
+    /**
+     * 屏幕共享
+     */
     shardScreenSet() {
 
     },

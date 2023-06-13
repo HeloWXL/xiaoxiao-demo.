@@ -1,16 +1,23 @@
 import VueRouter from 'vue-router'
-import VideoCallUi from '@/views/Chat.vue'
+import VideoCallUi from '@/views/Call/Call.vue'
 
-const router = {
-    path: "/",
-    name: 'VideoCallUi',
-    component: VideoCallUi
-}
+import Meeting from '@/views/Meeting/Meeting.vue'
+
+const router = [
+    {
+        path: "/",
+        name: 'VideoCallUi',
+        component: VideoCallUi
+    },
+    {
+        path: "/Meeting",
+        name: 'Meeting',
+        component: Meeting
+    }
+]
 
 const routes = new VueRouter({
-    routes: [
-        router
-    ]
+    routes: router
 })
 
 export default routes

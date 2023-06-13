@@ -14,6 +14,8 @@ import store  from "./store/index";
 
 Vue.prototype.$wsServerUrl =  'ws://localhost:8076/chat/'
 
+Vue.prototype.$sipServerRoomUrl =  'ws://localhost:8076/chat/'
+
 new Vue({
   render: h => h(App),
   router,

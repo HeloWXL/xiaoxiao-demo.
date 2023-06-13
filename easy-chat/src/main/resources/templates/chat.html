@@ -151,6 +151,7 @@
                 '       <p class="user">用户名：' + msg.sender + '</p><p class="chat">' + msg.msg + '</p>' +
                 '   </div>' +
                 '</div>');
+            speak(msg.msg)
             SOCKET.scroolBottom();
         },
         /**
@@ -214,6 +215,20 @@
                 SOCKET.ws.close();
             }
         }
+    }
+
+
+    function speak(_text){
+        if(!!window.SpeechSynthesisUtterance){
+            console.log("请使用其他浏览器！")
+        }
+        window.speechSynthesis.cancel()
+        var utterThis = new window.SpeechSynthesisUtterance();
+        console.log( window.speechSynthesis.getVoices())
+        utterThis.text = _text;
+        utterThis.lang = 'zh';//汉语
+        utterThis.rate = 0.7;//语速
+        window.speechSynthesis.speak(utterThis)
     }
 
     window.onbeforeunload  = function (){
