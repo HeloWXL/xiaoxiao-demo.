@@ -7,7 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("notice")
-public class NoticeController {
+public class PageController {
 
     /**
      * 跳转通知页面
