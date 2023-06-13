@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
@@ -16,6 +17,7 @@ import lombok.Data;
  * @author wang.xianlin
  * @since 2023-06-10 12:19:43
  */
+@JsonIgnoreProperties(value = { "handler" })
 @Data
 @SuppressWarnings("serial")
 public class Menu extends Model<Menu> {

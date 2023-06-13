@@ -44,7 +44,6 @@ public class MenuTree {
                 childrenList.add(menu);
             }
         });
-
         rootNode.setChildrenList(childrenList);
         return rootNode;
     }

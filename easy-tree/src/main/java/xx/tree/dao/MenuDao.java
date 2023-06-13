@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import xx.tree.entity.Menu;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * (Menu)表数据库访问层
  *
@@ -12,6 +14,10 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface MenuDao extends BaseMapper<Menu> {
-
+    /**
+     * 通过SQL查询菜单树
+     * @return
+     */
+    List<Menu> queryMenuTreeBySQL();
 }
 

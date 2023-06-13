@@ -17,8 +17,4 @@ public class NoticeController {
     public ModelAndView toIndex() {
         return new ModelAndView("Notice");
     }
-
-
-
-
 }

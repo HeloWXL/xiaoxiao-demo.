@@ -6,6 +6,8 @@ import xx.tree.entity.Menu;
 import xx.tree.service.MenuService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * (Menu)表服务实现类
  *
@@ -15,5 +17,9 @@ import org.springframework.stereotype.Service;
 @Service("menuService")
 public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuService {
 
+    @Override
+    public List<Menu> queryMenuTreeBySQL() {
+        return this.baseMapper.queryMenuTreeBySQL();
+    }
 }
 

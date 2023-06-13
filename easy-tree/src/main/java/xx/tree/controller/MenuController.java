@@ -29,7 +29,7 @@ public class MenuController extends ApiController {
     private MenuService menuService;
 
     /**
-     * 分页查询所有数据
+     * 通过构建成树形
      *
      * @return 所有数据
      */
@@ -41,15 +41,27 @@ public class MenuController extends ApiController {
         return R.ok(menus);
     }
 
+    /**
+     * 通过SQL直接查询
+     * @return
+     */
+    @GetMapping("queryMenuTreeBySQL")
+    public R queryMenuTreeBySQL() {
+        List<Menu> menuList = this.menuService.queryMenuTreeBySQL();
+        return R.ok(menuList);
+    }
 
 
+    /**
+     * 菜单页面
+     * @return
+     */
     @GetMapping("index")
     public ModelAndView toMenu() {
         List<Menu> menuList = this.menuService.list();
         MenuTree menuTree = new MenuTree(menuList);
         List<Menu> menus = menuTree.buildTree();
-        return new ModelAndView("Menu").addObject("menus",menus);
+        return new ModelAndView("Menu").addObject("menus",menus).addObject("menuSql",this.menuService.queryMenuTreeBySQL());
     }
-
 }
 
