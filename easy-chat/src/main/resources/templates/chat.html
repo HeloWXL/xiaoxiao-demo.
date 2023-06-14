@@ -89,8 +89,7 @@
     /**
      * WebSocket 相关
      */
-    var SOCKET = {
-
+    var socket = {
         /**
          * 存放消息div
          */
@@ -117,21 +116,21 @@
                 layer.msg('请输入您的用户Id', {icon: 5, time: 1500})
                 return false;
             }
-            SOCKET.url = SOCKET.url.replace("https", "ws").replace("http", "ws");
+            socket.url = socket.url.replace("https", "ws").replace("http", "ws");
             //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
-            if (SOCKET.ws != null) {
-                SOCKET.ws.close();
-                SOCKET.ws = null;
+            if (socket.ws != null) {
+                socket.ws.close();
+                socket.ws = null;
             }
-            SOCKET.ws = new WebSocket(SOCKET.url+userId);
+            socket.ws = new WebSocket(socket.url+userId);
             //打开事件
-            SOCKET.ws.onopen = SOCKET.onOpen;
+            socket.ws.onopen = socket.onOpen;
             //关闭事件
-            SOCKET.ws.onclose = SOCKET.onClose;
+            socket.ws.onclose = socket.onClose;
             //发生了错误事件
-            SOCKET.ws.onerror = SOCKET.onError;
+            socket.ws.onerror = socket.onError;
             // 接收消息
-            SOCKET.ws.onmessage = SOCKET.onMessage;
+            socket.ws.onmessage = socket.onMessage;
         },
         /**
          * 成功建立
@@ -144,7 +143,7 @@
          */
         onMessage: (msg) => {
             msg = JSON.parse(msg.data)
-            SOCKET.$msgDiv.append('' +
+            socket.$msgDiv.append('' +
                 '<div class="other-msg-container">' +
                 '   <img class="left-img" src="/images/left.png">' +
                 '   <div class="other-msg msg-common">' +
@@ -152,7 +151,7 @@
                 '   </div>' +
                 '</div>');
             speak(msg.msg)
-            SOCKET.scroolBottom();
+            socket.scroolBottom();
         },
         /**
          * 连接发生错误
@@ -185,16 +184,16 @@
                 "receiver": receiver,
                 "msg": msg
             };
-            if(SOCKET.ws && SOCKET.ws.readyState === 1){
-                SOCKET.ws.send(JSON.stringify(msgObj));
-                SOCKET.$msgDiv.append('' +
+            if(socket.ws && socket.ws.readyState === 1){
+                socket.ws.send(JSON.stringify(msgObj));
+                socket.$msgDiv.append('' +
                     '<div class="my-msg-container">' +
                     '   <img class="right-img" src="/images/right.png">' +
                     '   <div class="my-msg msg-common">' +
                     '       <p class="user">用户名：' + $("#userId").val() + '</p><p class="chat">' + msgObj.msg + '</p>' +
                     '   </div>' +
                     '</div>');
-                SOCKET.scroolBottom();
+                socket.scroolBottom();
                 $("#msg").val('')
             }else{
                 layer.msg('请检查连接是否正常？', {icon: 5,time: 1500});
@@ -211,12 +210,11 @@
          * 断开连接
          */
         disConnect:()=>{
-            if(SOCKET.ws){
-                SOCKET.ws.close();
+            if(socket.ws){
+                socket.ws.close();
             }
         }
     }
-
 
     function speak(_text){
         if(!!window.SpeechSynthesisUtterance){
@@ -232,7 +230,7 @@
     }
 
     window.onbeforeunload  = function (){
-        SOCKET.disConnect();
+        socket.disConnect();
     }
 
 </script>
