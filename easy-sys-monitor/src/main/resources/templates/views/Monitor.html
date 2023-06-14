@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>动态Echarts图表</title>
+    <title>系统监控</title>
     <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
     <style>
         .echart-div {
@@ -17,35 +17,56 @@
 <div class="layui-main" style="width: 100%;">
     <div class="layui-bg-gray" style="padding: 16px;">
         <div class="layui-row layui-col-space15">
-            <div class="layui-col-md6">
+            <div class="layui-col-md4">
                 <div class="layui-card">
-                    <div class="layui-card-header">内存监控</div>
+                    <div class="layui-card-header"><i class="layui-icon layui-icon-senior"></i> 内存监控</div>
                     <div class="layui-card-body">
                         <div class="echart-div" id="mem_pie"></div>
                     </div>
                 </div>
             </div>
-            <div class="layui-col-md6">
+            <div class="layui-col-md4">
                 <div class="layui-card">
-                    <div class="layui-card-header">JVM内存监控</div>
+                    <div class="layui-card-header"><i class="layui-icon layui-icon-app"></i> JVM内存监控</div>
                     <div class="layui-card-body">
                         <div class="echart-div" id="jvm_pie"></div>
                     </div>
                 </div>
             </div>
-            <div class="layui-col-md6">
+            <div class="layui-col-md4">
                 <div class="layui-card">
-                    <div class="layui-card-header">CPU</div>
+                    <div class="layui-card-header"><i class="layui-icon layui-icon-shrink-right"></i> CPU</div>
                     <div class="layui-card-body">
                         <div class="echart-div" id="cpu_pie"></div>
                     </div>
                 </div>
             </div>
-            <div class="layui-col-md6">
+        </div>
+        <!--服务器信息-->
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-header">卡片面板</div>
+                    <div class="layui-card-header"><i class="layui-icon layui-icon-chart-screen"></i> 服务器信息</div>
                     <div class="layui-card-body">
-                        <div class="echart-div" id="pie"></div>
+                        <table class="layui-table" lay-skin="line">
+                            <tbody id="sys-info">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--Java虚拟机信息-->
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header"><i class="layui-icon layui-icon-engine"></i> Java虚拟机信息</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-skin="line">
+                            <tbody id="java-jvm-info">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -69,10 +90,16 @@
             // 通过接口获取动态数据
             get('/monitor', null, res => {
                 console.log(res)
-                MONITOR.drawPie();
+                // 系统内存
                 MONITOR.loadMem(res.mem);
-                MONITOR.loadJvmMem(res.jvm)
+                // jvm内存
+                MONITOR.loadJvmMem(res.jvm);
+                // CPU
                 MONITOR.loadCpu(res.cpu);
+                // 系统信息
+                MONITOR.loadSysInfo(res.sys);
+                // 项目路径
+                MONITOR.loadJvmInfo(res.jvm);
             }, error => {
                 console.error("获取数据异常:", error)
             })
@@ -94,7 +121,7 @@
             let option = {
                 title: {
                     text: '内存',
-                    subtext: '系统内存'+men.total+'G',
+                    subtext: '系统内存' + mem.total + 'G',
                     left: 'center'
                 },
                 tooltip: {
@@ -168,6 +195,10 @@
             };
             myChart.setOption(option);
         },
+        /**
+         * 加载CPU信息
+         * @param cpu
+         */
         loadCpu: (cpu) => {
             let data = [
                 {
@@ -214,50 +245,57 @@
             myChart.setOption(option);
         },
         /**
-         * 绘制饼图
+         * 加载系统信息
          */
-        drawPie: () => {
-            var chartDom = document.getElementById('pie');
-            var myChart = echarts.init(chartDom);
-            let option = {
-                title: {
-                    text: '文章数据统计',
-                    subtext: '统计',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left'
-                },
-                series: [
-                    {
-                        name: 'Access From',
-                        type: 'pie',
-                        radius: '50%',
-                        data: [
-                            {value: 1048, name: 'Search Engine'},
-                            {value: 735, name: 'Direct'},
-                            {value: 580, name: 'Email'},
-                            {value: 484, name: 'Union Ads'},
-                            {value: 300, name: 'Video Ads'}
-                        ],
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-            myChart.setOption(option);
+        loadSysInfo: (sysInfo) => {
+            console.log(sysInfo)
+            var infoHtml = '<tr>\n' +
+                '                                <td>服务器名称</td>\n' +
+                '                                <td>' + sysInfo.computerName + '<td>\n' +
+                '                            </tr>';
+            infoHtml += '<tr>\n' +
+                '                                <td>服务器IP</td>\n' +
+                '                                <td>' + sysInfo.computerIp + '<td>\n' +
+                '                            </tr>';
+
+            infoHtml += '<tr>\n' +
+                '                                <td>服务器操作系统</td>\n' +
+                '                                <td>' + sysInfo.osName + '<td>\n' +
+                '                            </tr>';
+            infoHtml += '<tr>\n' +
+                '                                <td>系统架构</td>\n' +
+                '                                <td>' + sysInfo.osArch + '<td>\n' +
+                '                            </tr>';
+            $('#sys-info').html(infoHtml)
+        },
+        /**
+         * 加载Java虚拟机信息
+         */
+        loadJvmInfo: (javaJvmInfo) => {
+            var jvmInfoHtml = '<tr>\n' +
+                '                                <td>Java名称</td>\n' +
+                '                                <td>' + javaJvmInfo.name + '<td>\n' +
+                '                            </tr>';
+            jvmInfoHtml += '<tr>\n' +
+                '                                <td>Java版本</td>\n' +
+                '                                <td>' + javaJvmInfo.version + '<td>\n' +
+                '                            </tr>';
+
+            jvmInfoHtml += '<tr>\n' +
+                '                                <td>启动时间</td>\n' +
+                '                                <td>' + javaJvmInfo.startTime + '<td>\n' +
+                '                            </tr>';
+            jvmInfoHtml += '<tr>\n' +
+                '                                <td>安装路径</td>\n' +
+                '                                <td>' + javaJvmInfo.home + '<td>\n' +
+                '                            </tr>';
+            jvmInfoHtml += '<tr>\n' +
+                '                                <td>运行时长</td>\n' +
+                '                                <td>' + javaJvmInfo.runTime + '<td>\n' +
+                '                            </tr>';
+            $('#java-jvm-info').html(jvmInfoHtml)
         }
     }
-
 
     /**
      * get请求
