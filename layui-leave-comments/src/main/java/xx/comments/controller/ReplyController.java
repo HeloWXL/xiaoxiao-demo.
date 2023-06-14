@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,28 +29,6 @@ public class ReplyController extends ApiController {
     @Resource
     private ReplyService replyService;
 
-    /**
-     * 分页查询所有数据
-     *
-     * @param page  分页对象
-     * @param reply 查询实体
-     * @return 所有数据
-     */
-    @GetMapping
-    public R selectAll(Page<Reply> page, Reply reply) {
-        return success(this.replyService.page(page, new QueryWrapper<>(reply)));
-    }
-
-    /**
-     * 通过主键查询单条数据
-     *
-     * @param id 主键
-     * @return 单条数据
-     */
-    @GetMapping("{id}")
-    public R selectOne(@PathVariable Serializable id) {
-        return success(this.replyService.getById(id));
-    }
 
     /**
      * 新增数据
@@ -57,20 +36,10 @@ public class ReplyController extends ApiController {
      * @param reply 实体对象
      * @return 新增结果
      */
-    @PostMapping
+    @PostMapping("insert")
     public R insert(@RequestBody Reply reply) {
+        reply.setCreateTime(new Date());
         return success(this.replyService.save(reply));
-    }
-
-    /**
-     * 修改数据
-     *
-     * @param reply 实体对象
-     * @return 修改结果
-     */
-    @PutMapping
-    public R update(@RequestBody Reply reply) {
-        return success(this.replyService.updateById(reply));
     }
 
     /**

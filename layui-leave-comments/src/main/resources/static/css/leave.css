@@ -17,8 +17,6 @@
 .user-name{
     line-height: 30px;
     height: 30px;
-    font-weight: bold;
-    color: #FFB800;
 }
 
 .leavetime{
@@ -30,8 +28,21 @@
 }
 
 .question{
+    margin-left: 10px;
     line-height: 2rem;
-    font-size: 14px;
-    color: black;
     padding: 10px;
+    font-weight: 400;
+    font-size: 14px;
+    color: gray;
+}
+
+#replyForm{
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.reply-ul{
+    background-color: #F6F5F5;
+    border-radius: 5px;
+    padding: 1px;
 }

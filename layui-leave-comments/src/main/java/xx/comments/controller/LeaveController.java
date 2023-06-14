@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import xx.comments.entity.Leave;
+import xx.comments.entity.Reply;
 import xx.comments.service.LeaveService;
 import org.springframework.web.bind.annotation.*;
+import xx.comments.service.ReplyService;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -29,13 +31,20 @@ public class LeaveController extends ApiController {
     @Resource
     private LeaveService leaveService;
 
+    @Resource
+    private ReplyService replyService;
+
     /**
      * 分页查询所有数据
      * @return 所有数据
      */
     @GetMapping("queryAll")
     public R queryAll() {
-        return success(this.leaveService.list());
+        List<Leave> list = this.leaveService.list();
+        list.stream().forEach(item->{
+            item.setReplyList(this.replyService.list(new QueryWrapper<Reply>().eq("leave_id",item.getLeaveId())));
+        });
+        return success(list);
     }
 
     /**

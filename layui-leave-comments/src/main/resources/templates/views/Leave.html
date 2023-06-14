@@ -51,36 +51,32 @@
                             <a style="color: #1E9FFF;cursor: pointer;font-size: 14px">回复</a>
                         </div>
                     </li>
-
-                    <li>
-                        <div class="user-name">
-                            halo
-                        </div>
-                        <div class="question">
-                            pom里面加上这个配置， 这个意思大概就是忽略 yml文件中的中文注释
-                        </div>
-                        <div class="leavetime">
-                            2023-05-19 12:22:21
-                        </div>
-                    </li>
-
-                    <li>
-                        <div class="user-name">
-                            halo
-                        </div>
-                        <div class="question">
-                            pom里面加上这个配置， 这个意思大概就是忽略 yml文件中的中文注释
-                        </div>
-                        <div class="leavetime">
-                            2023-05-19 12:22:21
-                        </div>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
 </body>
+
+<div id="replyContainer" style="display: none">
+    <form class="layui-form" action="#" id="replyForm">
+        <div class="layui-form-item layui-form-text" id="reply-container">
+            <div class="layui-input-block">
+                <textarea placeholder="请输入留言内容" class="layui-textarea" required name="content"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn layui-btn-normal" lay-filter="replyForm" lay-submit>
+                    提交
+                </button>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="cancleReply()">
+                    取消
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 
 <!--引入js文件-->
 <script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
@@ -89,15 +85,24 @@
 <script>
     var form = null;
     var element = null;
+    var layer = null;
+    var leaveId = null;
 
     $(() => {
         loadLeaveData()
 
-        layui.use(['form'], function () {
+        layui.use(['form', 'element', 'layer'], function () {
             form = layui.form;
             element = layui.element;
+            layer = layui.layer;
+
             form.on('submit(leaveForm)', function (data) {
                 saveLeaveForm(data.field)
+                return false;
+            });
+
+            form.on('submit(replyForm)', function (data) {
+                saveReplyForm(data.field)
                 return false;
             });
         })
@@ -123,6 +128,45 @@
     }
 
     /**
+     * 留言回复
+     * @param _this
+     * @param leaveId
+     */
+    function replyLeave(_this, leaveId) {
+        this.leaveId = leaveId;
+        $(_this).closest('.reply').append($('#replyContainer').html());
+    }
+
+    /**
+     * 取消回复
+     */
+    function cancleReply() {
+        $('#replyForm').remove();
+    }
+
+    /**
+     * 回复提交
+     * @param obj
+     */
+    function saveReplyForm(obj) {
+        obj.leaveId = leaveId;
+        obj.userId = 2;
+        jsonPost(obj, '/reply/insert', res => {
+            if (res.data === true) {
+                layer.msg("提交成功", {icon: 1, time: 1500}, () => {
+                    cancleReply();
+                    loadLeaveData();
+                })
+            } else {
+                layer.msg('发布失败', {icon: 5, time: 1500})
+            }
+        }, error => {
+            console.error(error)
+            layer.msg('服务器内部异常', {icon: 5, time: 1500})
+        })
+    }
+
+    /**
      * 加载留言数据
      */
     function loadLeaveData() {
@@ -131,6 +175,29 @@
                 let data = res.data;
                 var str = '';
                 data.forEach(item => {
+                    var replyStr = '<ul class="reply-ul">';
+                    if (item.replyList && item.replyList.length > 0) {
+                        item.replyList.forEach(reply => {
+                            replyStr += '<li>\n' +
+                                '                        <div class="user-name">\n' +
+                                '                            <span>\n' +
+                                '                                 <img src="https://images.cnblogs.com/cnblogs_com/HelloWxl/2196372/o_220731092324_a.JPG" width="20px" height="20px"> ' + reply.userId + ' \n' +
+                                '                            </span>\n' +
+                                '                            <div class="leavetime" style="float: right">\n' +
+                                '                                <i class="layui-icon layui-icon-time"></i>\n' +
+                                '                                ' + reply.createTime + '\n' +
+                                '                            </div>\n' +
+                                '                        </div>\n' +
+                                '                        <div class="question">\n' +
+                                '                            ' + reply.content + '' +
+                                '                        </div>\n' +
+                                '                        <div class="reply">\n' +
+                                '                            <a style="color: #1E9FFF;cursor: pointer;font-size: 14px">回复</a>\n' +
+                                '                        </div>\n' +
+                                '                    </li>';
+                        })
+                    }
+                    replyStr += '</ul>';
                     str += '<li>\n' +
                         '                        <div class="user-name">\n' +
                         '                            <span>\n' +
@@ -145,11 +212,10 @@
                         '                         ' + item.content + '   ' +
                         '                        </div>\n' +
                         '                        <div class="reply">\n' +
-                        '                           <a style="color: #1E9FFF;cursor: pointer;font-size: 14px">回复</a>\n' +
+                        '                           <a style="color: #1E9FFF;cursor: pointer;font-size: 14px" onclick="replyLeave(this,' + item.leaveId + ')" >回复</a>\n' +
                         '                        </div>\n' +
-                        '                    </li><hr>'
-
-
+                        '                       ' + replyStr + '' +
+                        '                    </li><hr>';
                 })
                 $('.leave-list ul').html(str);
             }
@@ -158,5 +224,7 @@
             layer.msg('服务器内部异常', {icon: 5, time: 1500})
         })
     }
+
+
 </script>
 </html>
