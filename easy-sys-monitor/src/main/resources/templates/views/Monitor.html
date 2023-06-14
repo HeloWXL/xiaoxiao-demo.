@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>动态Echarts图表</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/layui/css/layui.css}"/>
+    <style>
+        .echart-div {
+            height: 400px;
+            width: 400px;
+            /* 水平垂直居中 */
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-main" style="width: 100%;">
+    <div class="layui-bg-gray" style="padding: 16px;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">内存监控</div>
+                    <div class="layui-card-body">
+                        <div class="echart-div" id="mem_pie"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">JVM内存监控</div>
+                    <div class="layui-card-body">
+                        <div class="echart-div" id="jvm_pie"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">CPU</div>
+                    <div class="layui-card-body">
+                        <div class="echart-div" id="cpu_pie"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">卡片面板</div>
+                    <div class="layui-card-body">
+                        <div class="echart-div" id="pie"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/plugins/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/javascript/jquery-2.1.4.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/echart/echarts.min.js}"></script>
+<script>
+    $(function () {
+        MONITOR.init();
+    })
+
+    /**
+     * 图表
+     */
+    var MONITOR = {
+        init: () => {
+            // 通过接口获取动态数据
+            get('/monitor', null, res => {
+                console.log(res)
+                MONITOR.drawPie();
+                MONITOR.loadMem(res.mem);
+                MONITOR.loadJvmMem(res.jvm)
+                MONITOR.loadCpu(res.cpu);
+            }, error => {
+                console.error("获取数据异常:", error)
+            })
+        },
+        /**
+         * 加载系统内存监控
+         */
+        loadMem: (mem) => {
+            let data = [
+                {
+                    name: '已用内存', value: (mem.used / mem.total) * 100,
+                },
+                {
+                    name: '剩余内存', value: (mem.free / mem.total) * 100,
+                }
+            ]
+            var chartDom = document.getElementById('mem_pie');
+            var myChart = echarts.init(chartDom);
+            let option = {
+                title: {
+                    text: '内存',
+                    subtext: '系统内存'+men.total+'G',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: '内存使用情况',
+                        type: 'pie',
+                        radius: '50%',
+                        data: data,
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        },
+        /**
+         * 加载JVM监控
+         * @param jvm
+         */
+        loadJvmMem: (jvm) => {
+            let data = [
+                {
+                    name: '已用内存', value: jvm.used,
+                },
+                {
+                    name: '剩余内存', value: jvm.total - jvm.used,
+                }
+            ]
+            var chartDom = document.getElementById('jvm_pie');
+            var myChart = echarts.init(chartDom);
+            let option = {
+                title: {
+                    text: 'JVM内存',
+                    subtext: '总内存' + jvm.total + 'M',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: '内存使用情况',
+                        type: 'pie',
+                        radius: '50%',
+                        data: data,
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        },
+        loadCpu: (cpu) => {
+            let data = [
+                {
+                    name: '用户使用率', value: cpu.used,
+                },
+                {
+                    name: '系统使用率', value: cpu.sys,
+                },
+                {
+                    name: '当前空闲率', value: cpu.free,
+                }
+            ]
+            var chartDom = document.getElementById('cpu_pie');
+            var myChart = echarts.init(chartDom);
+            let option = {
+                title: {
+                    text: '内存',
+                    subtext: '监控',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: '内存使用情况',
+                        type: 'pie',
+                        radius: '50%',
+                        data: data,
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        },
+        /**
+         * 绘制饼图
+         */
+        drawPie: () => {
+            var chartDom = document.getElementById('pie');
+            var myChart = echarts.init(chartDom);
+            let option = {
+                title: {
+                    text: '文章数据统计',
+                    subtext: '统计',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: 'Access From',
+                        type: 'pie',
+                        radius: '50%',
+                        data: [
+                            {value: 1048, name: 'Search Engine'},
+                            {value: 735, name: 'Direct'},
+                            {value: 580, name: 'Email'},
+                            {value: 484, name: 'Union Ads'},
+                            {value: 300, name: 'Video Ads'}
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+    }
+
+
+    /**
+     * get请求
+     * @param url
+     * @param data
+     * @param success
+     * @param error
+     */
+    function get(url, data, success, error, async = true) {
+        $.ajax({
+            url: url,
+            data: data,
+            async: async,
+            dataType: 'json',
+            method: 'get',
+            success: success,
+            error: error
+        })
+    }
+</script>
