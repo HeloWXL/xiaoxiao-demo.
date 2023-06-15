@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>xx</groupId>
-    <artifactId>easy-more-chat</artifactId>
+    <artifactId>easy-more-rocketmq-chat</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>easy-more-chat</name>
-    <description>easy-more-chat</description>
+    <name>easy-more-rocketmq-chat</name>
+    <description>easy-more-rocketmq-chat</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,7 +54,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>xx.chat.EasyMoreChatApplication</mainClass>
+                    <mainClass>xx.rocketmq.chat.EasyMoreRocketmqChatApplication</mainClass>
                     <skip>true</skip>
                 </configuration>
                 <executions>
