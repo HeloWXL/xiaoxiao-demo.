@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--    下面这句话意思是保留springboot原先的日志配置，要不然后面日志打不出来了-->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="mylog" class="xx.log.monitor.log.MyLogBackAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d{@riqi@yyyy-MM-dd HH:mm:ss.SSS@riqi@} @xiancheng@[%thread]@xiancheng@ @dengji@%-5level@dengji@ @bao@%logger{50}@bao@ - %msg%n</pattern>
+        </layout>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="mylog" />
+    </root>
+</configuration>

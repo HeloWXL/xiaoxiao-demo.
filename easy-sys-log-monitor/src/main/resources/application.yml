@@ -1,0 +1,6 @@
+server:
+  port: 9001
+
+# 日志配置
+logging:
+  config: classpath:logback-spring.xml
