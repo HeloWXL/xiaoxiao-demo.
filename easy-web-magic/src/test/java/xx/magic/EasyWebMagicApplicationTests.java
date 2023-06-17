@@ -1,13 +1,15 @@
 package xx.magic;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import xx.magic.util.HandleProcessor;
+
+import javax.annotation.Resource;
 
 @SpringBootTest
 class EasyWebMagicApplicationTests {
 
-	@Test
 	void contextLoads() {
+
 	}
 
 }

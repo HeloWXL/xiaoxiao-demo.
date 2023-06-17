@@ -1,20 +1,19 @@
 package xx.magic.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import us.codecraft.webmagic.Spider;
-import xx.magic.util.SXSProcessorUtil;
+import xx.magic.util.HandleProcessor;
+
+import javax.annotation.Resource;
 
 @RestController
 public class SpiderController {
-    @Autowired
-    private SXSProcessorUtil sxsProcessorUtil;
+    @Resource
+    HandleProcessor handleProcessor;
 
-    @RequestMapping("/spider")
-    public String spider(){
-        Spider.create(sxsProcessorUtil).addUrl(SXSProcessorUtil.getURL()).run();
-        System.out.println("开始爬取工作信息啦");
-        return "sucess";
+    @GetMapping("start")
+    public String start(){
+        handleProcessor.process();
+        return "succ";
     }
 }

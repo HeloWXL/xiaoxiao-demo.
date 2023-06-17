@@ -21,4 +21,12 @@ public class HaloController {
     public String hello2(){
         return "success";
     }
+
+
+    @GetMapping("hello3")
+    public String hello3(HttpServletRequest request){
+        String ip = IPUtil.getIpAddr(request);
+        System.out.println(AddressUtil.getCityInfo(ip));
+        return "success";
+    }
 }
