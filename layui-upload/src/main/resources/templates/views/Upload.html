@@ -104,6 +104,7 @@
                 //常规使用 - 普通图片上传
                 upload.render({
                     elem: '#test1'
+                    , accept:'file'
                     , url: '/upload/uploadFile' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
                     , before: function (obj) {
                         //预读本地文件示例，不支持ie8
@@ -134,6 +135,7 @@
                 //选完文件后不自动上传
                 upload.render({
                     elem: '#test8'
+                    , accept:'file'
                     , url: '/upload/uploadFile' //此处配置你自己的上传接口即可
                     , auto: false
                     //,multiple: true
@@ -151,6 +153,7 @@
                 //拖拽上传
                 upload.render({
                     elem: '#test10'
+                    , accept:'file'
                     , url: '/upload/uploadFile' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
                     , done: function (res) {
                         if (res.data.flag === true) {
@@ -167,6 +170,7 @@
                 //绑定原始文件域
                 upload.render({
                     elem: '#test20'
+                    , accept:'file'
                     , url: '/upload/uploadFile' //此处配置你自己的上传接口即可
                     , done: function (res) {
                         if (res.data.flag === true) {
