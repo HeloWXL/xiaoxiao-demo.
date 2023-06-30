@@ -2,13 +2,14 @@ package xx.rabbitmq.chat.websocket;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.chat.constant.ConstantUtils;
-import com.chat.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
+import xx.rabbitmq.chat.constant.ConstantUtils;
+import xx.rabbitmq.chat.util.SpringUtils;
 
+import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;

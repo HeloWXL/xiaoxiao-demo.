@@ -1,11 +1,12 @@
 package xx.rabbitmq.chat.config;
 
 
-import com.chat.constant.ConstantUtils;
-import com.chat.websocket.WebSocketServer;
+
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import xx.rabbitmq.chat.constant.ConstantUtils;
+import xx.rabbitmq.chat.websocket.WebSocketServer;
 
 import java.io.IOException;
 import java.util.Map;

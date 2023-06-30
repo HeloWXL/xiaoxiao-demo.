@@ -28,7 +28,4 @@ spring:
     password: guest
     #连接超时时间
     connection-timeout: 15000s
-    queue: ''
-    listenerQueueName: ''
-    exchangeName: ''
 
