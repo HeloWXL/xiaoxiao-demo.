@@ -58,11 +58,4 @@ public class MenuTree {
         menus.forEach(this::builderChildrenNode);
         return menus;
     }
-
-
-    public static void main(String[] args) {
-        List<Menu> menuList = new ArrayList<>();
-        MenuTree menuTree = new MenuTree(menuList);
-        List<Menu> menus = menuTree.buildTree();
-    }
 }

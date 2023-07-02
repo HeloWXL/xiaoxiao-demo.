@@ -1,5 +1,6 @@
 package xx.wallpaper.util;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -18,7 +19,8 @@ public class DownLoadUtil {
      * @param urlString
      * @return
      */
-    public static String download(String urlString, String rootPath) {
+    @Async("asyncPoolTaskExecutor")
+    public String download(String urlString, String rootPath) {
         InputStream is = null;
         FileOutputStream os = null;
         try {

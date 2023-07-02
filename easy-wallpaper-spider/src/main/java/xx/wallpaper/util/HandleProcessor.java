@@ -38,7 +38,6 @@ public class HandleProcessor implements PageProcessor {
     public void process(Page page) {
         // 获取壁纸详情连接
         List<String> detailUrlList = page.getHtml().xpath("//div[@id='main']/div[@class='list']/ul/li/a/@href").all();
-        log.info("子页面地址列表：detailUrlList---->[{}]", detailUrlList.toString());
         if (detailUrlList.size() == 0) {
             saveInfo(page);
         } else {

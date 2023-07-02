@@ -6,7 +6,6 @@ import org.apache.commons.exec.PumpStreamHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public class CommonsExecTest {
     public static void main(String[] args) {

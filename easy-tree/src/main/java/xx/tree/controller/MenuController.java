@@ -28,6 +28,12 @@ public class MenuController extends ApiController {
     @Resource
     private MenuService menuService;
 
+    @GetMapping("queryMenu")
+    public R queryMenu() {
+        List<Menu> menuList = this.menuService.list();
+        return R.ok(menuList);
+    }
+
     /**
      * 通过构建成树形
      *

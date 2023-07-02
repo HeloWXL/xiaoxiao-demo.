@@ -1,21 +1,19 @@
 # Java 调用外部程序
 
-在Java中，可以通过Runtime类或ProcessBuilder类来实现调用外部程序
-
 # Runtime类与ProcessBuilder类
 
 > 使用Runtime类：
 
 ```java
 Runtime runtime=Runtime.getRuntime();
-        Process process=runtime.exec("外部程序路径");
+Process process=runtime.exec("外部程序路径");
 ```
 
 > 使用ProcessBuilder类
 
 ```java
 ProcessBuilder builder=new ProcessBuilder("外部程序路径");
-        Process process=builder.start();
+Process process=builder.start();
 
 ```
 
