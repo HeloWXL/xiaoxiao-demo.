@@ -31,7 +31,7 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" onclick="SOCKET.start()" type="button">建立连接</button>
+                        <button class="layui-btn" onclick="socket.start()" type="button">建立连接</button>
                     </div>
                 </div>
             </form>
@@ -58,7 +58,7 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button type="button" class="layui-btn layui-btn-normal" onclick="SOCKET.sendMsg()">发送消息</button>
+                    <button type="button" class="layui-btn layui-btn-normal" onclick="socket.sendMsg()">发送消息</button>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
         /**
          * websocket 连接地址
          */
-        url: "" + window.location.protocol + "//" + window.location.host + "/chat/" ,
+        url: "" + window.location.protocol + "//" + window.location.host + "/chat/chat/" ,
         /**
          * 开始建立连接
          * @returns {boolean}

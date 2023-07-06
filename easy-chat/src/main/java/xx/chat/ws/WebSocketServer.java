@@ -78,6 +78,10 @@ public class WebSocketServer {
      */
     public static void oneToOne(String toUser, String message) {
         WebSocketServer webSocketServer = webSocketMap.get(toUser);
+        if(webSocketServer == null) {
+            logger.error("当前节点找不到此用户哦：[{}]", toUser);
+            return;
+        }
         Session session = webSocketServer.session;
         if (session != null && session.isOpen()) {
             try {

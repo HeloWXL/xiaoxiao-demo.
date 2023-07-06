@@ -21,7 +21,7 @@ public class HandleProcessor implements PageProcessor {
     @Autowired
     private HandlepipeLine handlepipeLine;
 
-    private String URL = "http://www.netbian.com/meinv/";
+    private String URL = "http://www.netbian.com/meinv/index_2.htm";
 
     private String PREVIEW_URL = "http://www.netbian.com";
 
@@ -70,7 +70,7 @@ public class HandleProcessor implements PageProcessor {
         Spider.create(new HandleProcessor())
                 // 初始访问url地址
                 .addUrl(URL)
-                .thread(2)
+                .thread(5)
                 .addPipeline(this.handlepipeLine)
                 .run();
     }

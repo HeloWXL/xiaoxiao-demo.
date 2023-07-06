@@ -101,7 +101,6 @@
             ws = null;
         }
         ws = new WebSocket(socketUrl);
-        ws.binaryType = 'arraybuffer'
         //打开事件
         ws.onopen = function () {
             layer.msg('已建立WebSocket连接', {icon: 1})
@@ -119,7 +118,7 @@
          * @param msg
          */
         ws.onmessage = function (msg) {
-            msg = JSON.parse(ArrayBufferUTF8ToStr(msg.data))
+            msg = JSON.parse(msg.data)
             $("#msgDiv").append('' +
                 '<div class="other-msg-container">' +
                 '   <img class="left-img" src="/images/left.png">' +
