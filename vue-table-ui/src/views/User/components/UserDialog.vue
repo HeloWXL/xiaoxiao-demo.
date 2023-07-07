@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {saveOrUpdateUser} from "@/api/user/user";
+import {saveOrUpdateUser} from "@/api/student/student";
 
 export default {
   name: "UserDialog",

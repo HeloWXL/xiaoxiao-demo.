@@ -6,8 +6,8 @@
           <span>在线用户列表</span>
       </span>
     </div>
-    <div class="user-list">
-      <div class="user" v-for="(item,index) in userList" :key="index">
+    <div class="student-list">
+      <div class="student" v-for="(item,index) in userList" :key="index">
         {{item}}
       </div>
     </div>
@@ -74,11 +74,11 @@ export default {
   margin-left: 5px;
 }
 
-.user-list{
+.student-list{
   margin-top: 60px;
 }
 
-.user{
+.student{
   color: white;
   margin: 5px;
   height: 40px;

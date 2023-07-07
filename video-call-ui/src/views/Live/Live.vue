@@ -69,7 +69,7 @@
             </el-main>
             <!--用户操作-->
             <el-footer>
-              <div class="user-opt-container">
+              <div class="student-opt-container">
                 <span v-show="userInfo.pub === '1'">
                    <el-tooltip effect="dark" content="摄像头" placement="top">
                     <el-button icon="el-icon-video-camera" circle class="videoBtn" @click="videoSet"></el-button>
@@ -563,12 +563,12 @@ export default {
 
 
 /*用户操作*/
-.user-opt-container {
+.student-opt-container {
   height: 60px;
   text-align: center;
 }
 
-.user-opt-container span {
+.student-opt-container span {
   margin-left: 10px;
   text-align: center;
   line-height: 60px;

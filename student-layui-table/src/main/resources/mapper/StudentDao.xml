@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xx.student.dao.StudentDao">
+
+    <resultMap type="xx.student.entity.Student" id="StudentMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="stuNo" column="stu_no" jdbcType="VARCHAR"/>
+        <result property="stuName" column="stu_name" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="INTEGER"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="joinTime" column="join_time" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="StudentMap">
+        select id,
+               stu_no,
+               stu_name,
+               gender,
+               age,
+               join_time,
+               create_time
+        from halo.student
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StudentMap">
+        select id,
+               stu_no,
+               stu_name,
+               gender,
+               age,
+               join_time,
+               create_time
+        from halo.student limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="StudentMap">
+        select
+            id, stu_no, stu_name, gender, age, join_time, create_time
+        from halo.student
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="stuNo != null and stuNo != ''">
+                and stu_no = #{stuNo}
+            </if>
+            <if test="stuName != null and stuName != ''">
+                and stu_name = #{stuName}
+            </if>
+            <if test="gender != null">
+                and gender = #{gender}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="joinTime != null">
+                and join_time = #{joinTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into halo.student(stu_no, stu_name, gender, age, join_time, create_time)
+        values (#{stuNo}, #{stuName}, #{gender}, #{age}, #{joinTime}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into halo.student(stu_no, stu_name, gender, age, join_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.stuNo}, #{entity.stuName}, #{entity.gender}, #{entity.age}, #{entity.joinTime},
+            #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into halo.student(stu_no, stu_name, gender, age, join_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.stuNo}, #{entity.stuName}, #{entity.gender}, #{entity.age}, #{entity.joinTime},
+            #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        stu_no = values(stu_no) , stu_name = values(stu_name) , gender = values(gender) , age = values(age) , join_time
+        = values(join_time) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update halo.student
+        <set>
+            <if test="stuNo != null and stuNo != ''">
+                stu_no = #{stuNo},
+            </if>
+            <if test="stuName != null and stuName != ''">
+                stu_name = #{stuName},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="joinTime != null">
+                join_time = #{joinTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from halo.student
+        where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -101,13 +101,13 @@
     </el-row>
 
     <!--新增、修改弹窗-->
-    <user-dialog ref="userDialog" @queryUserInfo="queryUserInfo"></user-dialog>
+    <student-dialog ref="userDialog" @queryUserInfo="queryUserInfo"></student-dialog>
   </div>
 </template>
 
 <script>
 import UserDialog from "@/views/User/components/UserDialog";
-import {deleteUser, queryUser} from "@/api/user/user";
+import {deleteUser, queryUser} from "@/api/student/student";
 
 export default {
   name: "UserIndex",

@@ -16,10 +16,10 @@ Date: 2023-05-25 18:01:37
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for user
+-- Table structure for student
 -- ----------------------------
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
+DROP TABLE IF EXISTS `student`;
+CREATE TABLE `student` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` varchar(32) DEFAULT NULL,
   `user_name` varchar(255) DEFAULT NULL,
@@ -31,8 +31,8 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of user
+-- Records of student
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'halo', '哈喽', '12', '安徽', '2023-05-06 14:45:57', '123456');
-INSERT INTO `user` VALUES ('8', '1', '2', '3', '4', '2023-05-19 09:18:39', null);
-INSERT INTO `user` VALUES ('9', '3', '3', '33', '3', '2023-05-19 09:19:03', null);
+INSERT INTO `student` VALUES ('1', 'halo', '哈喽', '12', '安徽', '2023-05-06 14:45:57', '123456');
+INSERT INTO `student` VALUES ('8', '1', '2', '3', '4', '2023-05-19 09:18:39', null);
+INSERT INTO `student` VALUES ('9', '3', '3', '33', '3', '2023-05-19 09:19:03', null);

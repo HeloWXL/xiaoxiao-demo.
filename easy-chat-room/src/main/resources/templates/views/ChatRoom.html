@@ -25,7 +25,7 @@
         }
     </style>
     <script th:inline="javascript">
-        var user = [[${user}]]
+        var student = [[${student}]]
     </script>
 </head>
 <body>
@@ -41,13 +41,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">用户Id</label>
                         <div class="layui-input-inline">
-                            <input autocomplete="off" class="layui-input" th:value="${{user.userId}}">
+                            <input autocomplete="off" class="layui-input" th:value="${{student.userId}}">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">用户名</label>
                         <div class="layui-input-inline">
-                            <input autocomplete="off" class="layui-input" th:value="${{user.userName}}">
+                            <input autocomplete="off" class="layui-input" th:value="${{student.userName}}">
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">当前用户ID:</label>
             <div class="layui-input-block">
-                <input type="text" autocomplete="off" class="layui-input" disabled th:value="${{user.userId}}">
+                <input type="text" autocomplete="off" class="layui-input" disabled th:value="${{student.userId}}">
             </div>
         </div>
         <div class="layui-form-item">
@@ -175,7 +175,7 @@
                 SOCKET.ws.close();
                 SOCKET.ws = null;
             }
-            SOCKET.ws = new WebSocket(SOCKET.url + roomId + '/' + user.userId);
+            SOCKET.ws = new WebSocket(SOCKET.url + roomId + '/' + student.userId);
             //打开事件
             SOCKET.ws.onopen = SOCKET.onOpen;
             //关闭事件
@@ -234,7 +234,7 @@
                     '<div class="other-msg-container">' +
                     '   <img class="left-img" src="../images/left.png">' +
                     '   <div class="other-msg msg-common">' +
-                    '       <p class="user">用户名：' + msg.sender + '</p><p class="chat">' + msg.data + '</p>' +
+                    '       <p class="student">用户名：' + msg.sender + '</p><p class="chat">' + msg.data + '</p>' +
                     '   </div>' +
                     '</div>');
                 SOCKET.scroolBottom();
@@ -262,7 +262,7 @@
                 return;
             }
             var msgObj = {
-                sender: user.userId,
+                sender: student.userId,
                 roomId: roomId,
                 sysMsgType: 'text',
                 data: msg
@@ -273,7 +273,7 @@
                     '<div class="my-msg-container">' +
                     '   <img class="right-img" src="/images/right.png">' +
                     '   <div class="my-msg msg-common">' +
-                    '       <p class="user">用户名：' + user.userId + '</p><p class="chat">' + msg + '</p>' +
+                    '       <p class="student">用户名：' + student.userId + '</p><p class="chat">' + msg + '</p>' +
                     '   </div>' +
                     '</div>');
                 SOCKET.scroolBottom();
@@ -314,7 +314,7 @@
         getRoomList() {
             var msgObj = {
                 sysMsgType: 'roomList',
-                sender: user.userId,
+                sender: student.userId,
                 roomId: roomId
             }
             if (SOCKET.ws && SOCKET.ws.readyState === 1) {

@@ -39,7 +39,7 @@ CREATE TABLE `sys_menu` (
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
-INSERT INTO `sys_menu` VALUES ('105', 'system', '0', '[0],', '系统管理', 'fa-user', '#', '4', '1', '1', null, '1', '1');
+INSERT INTO `sys_menu` VALUES ('105', 'system', '0', '[0],', '系统管理', 'fa-student', '#', '4', '1', '1', null, '1', '1');
 INSERT INTO `sys_menu` VALUES ('106', 'mgr', 'system', '[0],[system],', '用户管理', '', '/mgr', '1', '2', '1', null, '1', '0');
 INSERT INTO `sys_menu` VALUES ('107', 'mgr_add', 'mgr', '[0],[system],[mgr],', '添加用户', null, '/mgr/add', '1', '3', '0', null, '1', '0');
 INSERT INTO `sys_menu` VALUES ('108', 'mgr_edit', 'mgr', '[0],[system],[mgr],', '修改用户', null, '/mgr/edit', '2', '3', '0', null, '1', '0');
@@ -131,7 +131,7 @@ INSERT INTO `sys_menu` VALUES ('1583064168808042499', 'dbOrder_add', 'dbOrder', 
 INSERT INTO `sys_menu` VALUES ('1583064168808042500', 'dbOrder_update', 'dbOrder', '[0],[dbOrder],', '活动预约更新', '', '/dbOrder/update', '99', '2', '0', null, '1', '0');
 INSERT INTO `sys_menu` VALUES ('1583064168808042501', 'dbOrder_delete', 'dbOrder', '[0],[dbOrder],', '活动预约删除', '', '/dbOrder/delete', '99', '2', '0', null, '1', '0');
 INSERT INTO `sys_menu` VALUES ('1583064168808042502', 'dbOrder_detail', 'dbOrder', '[0],[dbOrder],', '活动预约详情', '', '/dbOrder/detail', '99', '2', '0', null, '1', '0');
-INSERT INTO `sys_menu` VALUES ('1583064168808042503', 'dbTeacher', '0', '[0],', '讲师管理', '', '/user/teacher', '90', '1', '1', null, '1', null);
+INSERT INTO `sys_menu` VALUES ('1583064168808042503', 'dbTeacher', '0', '[0],', '讲师管理', '', '/student/teacher', '90', '1', '1', null, '1', null);
 INSERT INTO `sys_menu` VALUES ('1609104052676972545', 'dbExercises', '0', '[0],', '习题讲解', '', '/dbExercises', '99', '1', '1', null, '1', '0');
 INSERT INTO `sys_menu` VALUES ('1609104052676972546', 'dbExercises_list', 'dbExercises', '[0],[dbExercises],', '习题讲解列表', '', '/dbExercises/list', '99', '2', '0', null, '1', '0');
 INSERT INTO `sys_menu` VALUES ('1609104052676972547', 'dbExercises_add', 'dbExercises', '[0],[dbExercises],', '习题讲解添加', '', '/dbExercises/add', '99', '2', '0', null, '1', '0');

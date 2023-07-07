@@ -16,7 +16,7 @@
             <el-col :span="8">
               <!--右侧用户列表-->
               <div class="right-msg">
-                <user-list ref="userList"></user-list>
+                <student-list ref="userList"></student-list>
               </div>
             </el-col>
           </el-row>
